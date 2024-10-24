@@ -1,0 +1,205 @@
+.widget-indicator {
+	font-size: 1.21rem;
+	color: rgba(0, 0, 0, 0.15);
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+.widget {
+	position: relative !important;
+	box-shadow: none !important;
+}
+
+.widget:has(.no-events) {
+	display: none !important;
+}
+
+.widget header {
+	position: static !important;
+	padding: 0.8rem 0 1.21rem 0 !important;
+
+	&::after {
+		content: "";
+		height: calc(100% - 3.64rem);
+		width: 100%;
+		left: 0;
+		position: absolute;
+		border-radius: 1.125rem;
+		top: 3.64rem;
+		box-shadow: 0.05rem 0.05rem 0.2rem 0.2rem rgba(148, 148, 148, 0.1);
+	}
+
+	h2 {
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+		font-size: 1.21rem !important;
+		color: rgba(0, 0, 0, 0.15) !important;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		font-weight: 600 !important;
+		transition: color 0.2s ease-out;
+		margin: 0 !important;
+
+		cursor: pointer;
+		text-align: start !important;
+
+		* {
+			color: inherit !important;
+			text-align: inherit !important;
+		}
+
+		&:hover {
+			color: rgba(0, 0, 0, 0.3) !important;
+		}
+	}
+}
+
+.cta-conteneur {
+	top: 1.2rem !important;
+	right: 0 !important;
+	transform: translateY(-50%);
+}
+
+.widget .liste-imbriquee {
+	padding: 3rem 2.25rem !important;
+}
+
+/* date indicator */
+
+.widget .liste-imbriquee h3 {
+	margin: 0 !important;
+	padding: 0 0 2.375rem 0 !important;
+	background-color: transparent !important;
+	font-weight: 600 !important;
+	color: #888888 !important;
+	font-size: 1.21rem !important;
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	width: 100% !important;
+
+	&::before,
+	&::after {
+		content: "";
+		height: 0 !important;
+		border: solid 1px #a5a5a5;
+	}
+
+	&::before {
+		width: 3rem;
+	}
+
+	&::after {
+		width: max-content;
+		flex-grow: 1;
+	}
+
+	> span {
+		display: none !important;
+	}
+}
+
+/* item */
+
+.widget .liste-imbriquee {
+	justify-content: flex-start !important;
+}
+
+.widget .liste-imbriquee ul li > .conteneur-item {
+	margin: 0 !important;
+	padding: 1.5rem 0 !important;
+	display: flex !important;
+	flex-direction: column;
+	gap: 0.5rem;
+
+	> div {
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.description {
+		padding-left: 1.3125rem !important;
+		font-weight: 500 !important;
+		line-height: 1.2 !important;
+		font-size: 1.125rem !important;
+	}
+
+	.as-header {
+		align-items: start !important;
+	}
+
+	.with-color {
+		margin: 0 !important;
+
+		&::before {
+			margin-right: 1rem !important;
+		}
+	}
+
+	.titre-matiere {
+		font-size: 1.3125 !important;
+
+		&.est-fait {
+			color: rgba(0, 0, 0, 0.5) !important;
+		}
+	}
+
+	.tag-style {
+		padding: 0.5rem 0.85rem !important;
+		background: rgba(0, 0, 0, 0.05) !important;
+		color: rgba(0, 0, 0, 0.45) !important;
+		border-radius: 0.5rem !important;
+
+		&::after {
+			display: none !important;
+		}
+
+		&.ThemeCat-pedagogie {
+			background: rgba(0, 0, 0, 0.35) !important;
+			color: white !important;
+		}
+	}
+
+	.as-content.done {
+		display: block !important;
+
+		.description div {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			color: rgba(0, 0, 0, 0.3) !important;
+		}
+	}
+
+	.cb-termine {
+		margin-top: 0.5rem !important;
+		font-size: 1.21rem !important;
+		font-weight: 600 !important;
+		color: rgba(0, 0, 0, 0.3) !important;
+
+		&.is-checked {
+			color: rgba(0, 0, 0, 0.5) !important;
+		}
+
+		* *,
+		*::before,
+		*::after {
+			color: inherit !important;
+		}
+
+		> span:has(::before)::before,
+		> span:has(::after)::after {
+			width: 1.8rem !important;
+			height: 1.8rem !important;
+		}
+	}
+}
+
+.widget .liste-imbriquee ul > li:not(:last-child) {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.widget .liste-imbriquee > li:not(:last-child) {
+	margin-bottom: 2.25rem !important;
+}

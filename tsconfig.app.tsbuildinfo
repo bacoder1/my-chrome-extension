@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/popup.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/scripts/content.tsx","./src/utils/format_schedule_date_range.tsx","./src/utils/format_school_name.tsx","./src/utils/inject_custom_font.tsx","./src/utils/on_element_change.tsx","./src/utils/wait_for_element.tsx"],"version":"5.6.2"}
