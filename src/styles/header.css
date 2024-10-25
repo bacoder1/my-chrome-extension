@@ -26,17 +26,17 @@
 }
 
 .label-menu_niveau0 {
-	padding: 0rem 1.31rem !important;
+	padding: 0.5rem 0.65rem !important;
+	margin: 0 1rem !important;
 	height: auto !important;
-	color: rgba(0, 0, 0, 0.3) !important;
+	color: rgba(0, 0, 0, 0.5) !important;
 	border-color: transparent !important;
-	font-weight: 400 !important;
-	border: none !important;
-	letter-spacing: -1% !important;
+	font-weight: 500 !important;
+	letter-spacing: -0.01em !important;
 	font-size: 1.5rem !important;
-	border-radius: 9999px;
 	gap: 0.56rem;
 	transition: font-weight 0.2s ease-out, border-color 0.2s ease-out;
+	border-width: 2px !important;
 
 	i {
 		padding: 0 !important;
@@ -44,8 +44,9 @@
 }
 
 .item-selected .label-menu_niveau0 {
-	color: #0A578F !important;
+	color: black !important;
 	font-weight: 600 !important;
+	border-color: black !important;
 }
 
 .item-menu_niveau0 {
@@ -94,7 +95,7 @@
 	line-height: 0.9;
 	font-weight: 600;
 	font-size: 1.25rem;
-	color: #0E7CCB;
+	color: #0e7ccb;
 	background-color: rgba(14, 124, 203, 0.15);
 	padding: 0.375rem 0.5625rem;
 	border-radius: 7.5px;
@@ -171,19 +172,19 @@ h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper {
 
 .objetBandeauEntete_secondmenu li.item-menu_niveau1.menuitem-niveau {
 	padding: 0.6rem 1.15rem !important;
-	border-radius: 0.625rem !important;
-	outline: 1px solid rgba(165, 165, 165, 0.35);
-	color: #888888 !important;
+	border-radius: 0.5rem !important;
+	outline: 1px solid rgba(0, 0, 0, 0.15);
+	color: rgba(10, 87, 143, 0.4) !important;
 	font-weight: 500 !important;
-	letter-spacing: -1% !important;
+	letter-spacing: -0.01em !important;
 	font-size: 1.3rem !important;
 	gap: 0.56rem;
 	transition: font-weight 0.2s ease-out;
 	border: none !important;
 
 	&.selected {
-		background-color: rgba(0, 185, 117, 0.1);
-		color: #00a167 !important;
+		background-color: rgba(10, 87, 143, 0.05);
+		color: rgba(10, 87, 143, 1) !important;
 		font-weight: 600 !important;
 	}
 
@@ -199,6 +200,19 @@ h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper {
 
 	.menu-principal_niveau1 {
 		gap: 1.2rem;
+	}
+
+	.menu-commandes:not(:has(li:not([aria-disabled="true"]))) {
+		display: none !important;
+	}
+
+	.menu-commandes i[aria-disabled="true"] {
+		display: none;
+	}
+
+	.objetBandeauEntete_fullsize:has(span) {
+		flex: none !important;
+		color: rgba(0, 0, 0, 0.3);
 	}
 }
 
@@ -241,4 +255,11 @@ h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper {
 		height: 20px !important;
 		width: 20px !important;
 	}
+}
+
+.main-header {
+	border-radius: 0 0 3rem 3rem !important;
+	box-shadow: 0 -1px 7.5px rgba(0, 0, 0, 0.15) !important;
+	overflow: hidden !important;
+	z-index: 9999 !important;
 }

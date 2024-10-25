@@ -15,7 +15,8 @@
 	"web_accessible_resources": [
 		{
 			"resources": ["src/fonts/fixel/*.ttf"],
-			"matches": ["<all_urls>"]
+			"matches": ["<all_urls>"],
+			"use_dynamic_url": false
 		}
 	],
 	"permissions": []

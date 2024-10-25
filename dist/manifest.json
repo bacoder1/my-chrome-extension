@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "My Chrome Extension",
+  "version": "1.0.0",
+  "description": "A Chrome extension built with Vite and React",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "assets/content.tsx-loader-B41dm-YL.js"
+      ],
+      "matches": [
+        "https://*.index-education.net/pronote/eleve.html"
+      ],
+      "css": [
+        "assets/content-Cw0-ZvvD.css"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "src/fonts/fixel/*.ttf"
+      ],
+      "use_dynamic_url": false
+    },
+    {
+      "matches": [
+        "https://*.index-education.net/*"
+      ],
+      "resources": [
+        "assets/content.tsx-BcEoJ-5l.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ],
+  "permissions": []
+}
