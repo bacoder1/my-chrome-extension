@@ -1,0 +1,27 @@
+/* resources */
+
+.widget.ressourcepedagogique {
+	.one-line {
+		padding: 0 !important;
+	}
+
+	ul li {
+		border-color: rgba(var(--black), 0.05) !important;
+		padding: 1.125rem 1.5rem !important;
+
+		.wrap h3::before {
+			width: 0.468rem !important;
+			height: 2rem !important;
+			margin-right: 1rem !important;
+			border-radius: 99999px !important;
+		}
+	}
+
+	.date {
+		color: rgba(var(--black), 0.5) !important;
+	}
+
+	.pj-date-contain {
+		margin: 0.5rem 0 !important;
+	}
+}

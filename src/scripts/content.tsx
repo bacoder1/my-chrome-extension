@@ -1,6 +1,4 @@
-import "../index.css";
-import "../styles/header.css";
-import "../styles/widget.css"
+import "../styles/injected/globals.css";
 import formatSchoolName from "../utils/format_school_name";
 import {
 	createElement,
@@ -14,10 +12,59 @@ import {
 	Megaphone,
 	Settings,
 } from "lucide";
-import onElementChange from "../utils/on_element_change";
 import waitForElement from "../utils/wait_for_element";
 import formatScheduleDateRange from "../utils/format_schedule_date_range";
 import injectCustomFont from "../utils/inject_custom_font";
+import home from "./home";
+import global from "./global";
+
+function handlePageScripts() {
+	// Define the scripts and their target elements
+	const pageScripts = {
+		home: {
+			elementSelector: ".dotty .widget header > h2 > span",
+			script: home,
+		},
+	};
+
+	let lastRunTime = 0;
+	const delay = 1000; // delay in milliseconds
+
+	// Function to run both the specific and global scripts with delay
+	function runScriptWithDelay(script: Function) {
+		const currentTime = Date.now();
+		if (currentTime - lastRunTime >= delay) {
+			script();
+			global();
+			lastRunTime = currentTime;
+		}
+	}
+
+	// Run scripts for elements already present in the DOM
+	Object.values(pageScripts).forEach(({ elementSelector, script }) => {
+		const element = document.querySelector(elementSelector);
+		if (element && typeof script === "function") {
+			runScriptWithDelay(script);
+		}
+	});
+	console.log("First call");
+
+	// MutationObserver callback to watch for added elements
+	const observer = new MutationObserver(() => {
+		Object.values(pageScripts).forEach(({ elementSelector, script }) => {
+			const element = document.querySelector(elementSelector);
+			if (element && typeof script === "function") {
+					runScriptWithDelay(script);
+			}
+		});
+	});
+
+	// Start observing the body for mutations
+	observer.observe(document.body, {
+		childList: true,
+		subtree: true,
+	});
+}
 
 injectCustomFont();
 
@@ -45,6 +92,8 @@ function check(): void {
 
 function run() {
 	injectCustomFont();
+
+	handlePageScripts();
 
 	const longLabels = ["Cahier<br>de textes", "Vie<br>scolaire"];
 
@@ -127,20 +176,15 @@ function run() {
 
 	document
 		.querySelectorAll(".objetBandeauEntete_thirdmenu h1")
-		.forEach((_el, index) => {
-			onElementChange(
-				`.objetBandeauEntete_thirdmenu h1:nth-of-type(${index + 1}`,
-				(el: any) => {
-					console.log("hi");
-					const textContent = el.textContent?.trim();
-					if (textContent) {
-						el.insertAdjacentElement(
-							"afterbegin",
-							createElement(headerIcons[textContent])
-						);
-					}
-				}
-			);
+		.forEach((el) => {
+			console.log("hi");
+			const textContent = el?.textContent?.trim();
+			if (textContent) {
+				el.insertAdjacentElement(
+					"afterbegin",
+					createElement(headerIcons[textContent])
+				);
+			}
 		});
 
 	waitForElement(
@@ -153,24 +197,6 @@ function run() {
 			}
 		}
 	);
-
-	const widgetTitles: { [key: string]: string } = {};
-
-	onElementChange(".widget", () => {
-		document.querySelectorAll(".widget").forEach((el) => {
-			const title = el.querySelector("header")?.getAttribute("title");
-			console.log("hifeesdq")
-	
-			if (title) {
-				el.insertAdjacentHTML(
-					"beforebegin",
-					`<div class="widget-indicator">${widgetTitles[title] ?? title}</div>`
-				);
-			}
-			el.querySelector("header")?.remove();
-		});
-	})
-
 }
 
 function createSettingsButton() {

@@ -1,0 +1,39 @@
+/* vie scolaire */
+
+.widget.viescolaire ul li {
+	border-color: rgba(var(--black), 0.05) !important;
+	padding: 1.125rem 1.5rem !important;
+	transition: background-color 0.05s ease-out !important;
+
+	&:hover {
+		background-color: rgba(var(--marine-blue), 0.1) !important;
+	}
+
+	a {
+		height: 100%;
+		margin: 0 !important;
+		padding: 0 !important;
+
+		&:hover {
+			background-color: transparent !important;
+		}
+	}
+
+	.wrap .date {
+		color: rgba(var(--black), 0.5) !important;
+		padding-top: 0.5rem !important;
+	}
+
+	&.masked {
+		display: none !important;
+	}
+}
+
+.widget.viescolaire ul.liste-clickable {
+	margin: 0 !important;
+	padding: 0.4rem 0 !important;
+}
+
+.widget.viescolaire .content-container::after {
+	color: rgba(var(--marine-blue), 0.05) !important;
+}

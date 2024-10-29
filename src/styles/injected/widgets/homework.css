@@ -1,0 +1,156 @@
+/* homework */
+
+.widget.travailafaire .liste-imbriquee {
+	padding: 3rem 2.25rem !important;
+}
+
+/* date indicator */
+
+.widget.travailafaire .liste-imbriquee h3 {
+	margin: 0 !important;
+	padding: 0 0 2.375rem 0 !important;
+	background-color: transparent !important;
+	font-weight: 600 !important;
+	color: #888888 !important;
+	font-size: var(--text-sm) !important;
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	width: 100% !important;
+
+	&::before,
+	&::after {
+		content: "";
+		height: 0 !important;
+		border: solid 1px #a5a5a5;
+	}
+
+	&::before {
+		width: 3rem;
+	}
+
+	&::after {
+		width: max-content;
+		flex-grow: 1;
+	}
+
+	> span {
+		display: none !important;
+	}
+}
+
+/* item */
+
+.widget.travailafaire .liste-imbriquee {
+	justify-content: flex-start !important;
+}
+
+.widget.travailafaire .liste-imbriquee ul li > .conteneur-item {
+	margin: 0 !important;
+	padding: 1.5rem 0 !important;
+	display: flex !important;
+	flex-direction: column;
+	gap: 0.5rem;
+
+	> div {
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.description {
+		padding-left: 1.3125rem !important;
+		font-weight: 500 !important;
+		line-height: 1.2 !important;
+		font-size: var(--text-xs) !important;
+	}
+
+	.as-header {
+		align-items: start !important;
+	}
+
+	.with-color {
+		margin: 0 !important;
+
+		&::before {
+			width: 0.468rem !important;
+			height: 2rem !important;
+			margin-right: 1rem !important;
+			border-radius: 99999px !important;
+		}
+	}
+
+	.titre-matiere {
+		font-size: var(--text-md) !important;
+
+		&.est-fait {
+			color: rgba(var(--black), 0.5) !important;
+		}
+	}
+
+	.tag-style {
+		padding: 0.5rem 0.85rem !important;
+		background: rgba(var(--black), 0.05) !important;
+		color: rgba(var(--black), 0.45) !important;
+		border-radius: 0.5rem !important;
+		font-weight: 600 !important;
+
+		&::after {
+			display: none !important;
+		}
+
+		&.ThemeCat-pedagogie {
+			background: rgba(var(--black), 0.35) !important;
+			color: white !important;
+		}
+	}
+
+	.as-content.done {
+		display: block !important;
+
+		.description div {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			color: rgba(var(--black), 0.3) !important;
+		}
+	}
+
+	.cb-termine {
+		margin-top: 0.5rem !important;
+		font-size: var(--text-sm) !important;
+		font-weight: 600 !important;
+		color: rgba(var(--black), 0.3) !important;
+
+		&.is-checked {
+			color: rgba(var(--black), 0.5) !important;
+		}
+
+		span {
+			color: inherit !important;
+		}
+
+		* *,
+		*::before,
+		*::after {
+			color: inherit !important;
+		}
+
+		> span:has(::before)::before,
+		> span:has(::after)::after {
+			width: 1.8rem !important;
+			height: 1.8rem !important;
+		}
+	}
+}
+
+.widget.travailafaire .piece-jointe {
+	padding: 0 !important;
+}
+
+.widget.travailafaire .liste-imbriquee ul > li:not(:last-child) {
+	border-bottom: 1px solid rgba(var(--black), 0.1) !important;
+}
+
+.widget.travailafaire .liste-imbriquee > li:not(:last-child) {
+	margin-bottom: 2.25rem !important;
+}

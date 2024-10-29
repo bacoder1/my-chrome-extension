@@ -1,0 +1,97 @@
+/* timetable */
+
+.widget.edt {
+	.content-container {
+		padding: 0 2.25rem 3rem 2.25rem !important;
+		flex: none !important;
+
+		h2 {
+			font-weight: 600 !important;
+			color: rgba(var(--light-gray), 1) !important;
+			letter-spacing: 0.02em;
+		}
+	}
+
+	.filtre-conteneur {
+		padding: 3rem 2.25rem 1.5rem 2.25rem !important;
+
+		.input-wrapper {
+			gap: 1.5rem !important;
+
+			.as-date-picker {
+				border: 2px solid rgba(var(--light-gray), 0.35) !important;
+				border-radius: 1rem !important;
+				padding: 0.75rem 1.21rem !important;
+				background-color: rgba(var(--primary-blue), 0.15) !important;
+				height: auto !important;
+				color: rgba(var(--primary-blue), 1) !important;
+				font-weight: 600 !important;
+				font-size: var(--text-base) !important;
+				gap: 2rem !important;
+
+				* {
+					width: auto !important;
+					font-size: inherit !important;
+					font-weight: inherit !important;
+					color: inherit !important;
+				}
+			}
+		}
+
+		i {
+			margin: 0 !important;
+			padding: 0 !important;
+			background: none !important;
+			color: #636363 !important;
+			font-size: var(--text-sm) !important;
+		}
+	}
+
+	ul.liste-cours li {
+		padding: 0.65rem 0 !important;
+
+		.container-heures div:first-child {
+			font-size: var(--text-xl) !important;
+			font-weight: 600 !important;
+
+			+ div {
+				font-size: var(--text-md) !important;
+				color: rgba(var(--black), 0.5) !important;
+			}
+		}
+
+		.trait-matiere {
+			background-image: linear-gradient(
+				45deg,
+				rgba(242, 242, 242, 0.6) 25%,
+				/* rgba for hsla(0, 0%, 95%, 0.8) */ transparent 0,
+				transparent 50%,
+				rgba(242, 242, 242, 0.6) 0,
+				rgba(242, 242, 242, 0.6) 75%,
+				transparent 0,
+				transparent
+			);
+			background-size: 20px 20px;
+		}
+		ul.container-cours {
+			gap: 0.5rem !important;
+			li:first-child {
+				font-size: var(--text-lg) !important;
+			}
+			li:not(.container-etiquette):not(:first-of-type):not(:last-of-type) {
+				font-size: var(--text-xs);
+				color: rgba(var(--black), 0.45);
+			}
+
+			&:has(li.container-etiquette) > li:nth-last-child(2),
+			&:not(:has(li.container-etiquette)) > li:last-child {
+				font-size: inherit !important;
+				color: rgba(var(--subject-color), 1) !important;
+				border-radius: 0.6rem !important;
+				padding: 0.5rem 0.57rem !important;
+				background: rgba(var(--subject-color), 0.2);
+				width: fit-content;
+			}
+		}
+	}
+}

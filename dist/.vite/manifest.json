@@ -6,7 +6,7 @@
     "isEntry": true
   },
   "content.tsx-loader.js": {
-    "file": "assets/content.tsx-loader-B41dm-YL.js",
+    "file": "assets/content.tsx-loader-DeZn9Hfb.js",
     "src": "content.tsx-loader.js"
   },
   "index.html": {
@@ -16,12 +16,12 @@
     "isEntry": true
   },
   "src/scripts/content.tsx": {
-    "file": "assets/content.tsx-BcEoJ-5l.js",
+    "file": "assets/content.tsx-Boog02n8.js",
     "name": "content.tsx",
     "src": "src/scripts/content.tsx",
     "isEntry": true,
     "css": [
-      "assets/content-Cw0-ZvvD.css"
+      "assets/content-D4n-9UgV.css"
     ]
   }
 }
