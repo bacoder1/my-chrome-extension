@@ -10,13 +10,38 @@ import {
 	GraduationCap,
 	CalendarDays,
 	Megaphone,
-	Settings,
 } from "lucide";
 import waitForElement from "../utils/wait_for_element";
 import formatScheduleDateRange from "../utils/format_schedule_date_range";
 import injectCustomFont from "../utils/inject_custom_font";
 import home from "./home";
 import global from "./global";
+import colorList from "../utils/colors.json";
+
+chrome.storage.sync.get("accentColor", (result) => {
+	let accentColor = result.accentColor;
+
+	if (!accentColor) {
+		// If `accentColor` is empty, set it to the first color in colorList
+		accentColor = colorList[0];
+		chrome.storage.sync.set({ accentColor });
+	}
+
+	// Now apply accentColor's RGB values to CSS variables
+	for (let key in accentColor.rgb) {
+		const value = accentColor.rgb[key];
+		document.body.style.setProperty(`--accent-color-${key}`, value);
+	}
+});
+
+chrome.storage.onChanged.addListener((changes, _namespace) => {
+	if (changes.accentColor) {
+		for (let key in changes.accentColor.newValue.rgb) {
+			const value = changes.accentColor.newValue.rgb[key];
+			document.body.style.setProperty(`--accent-color-${key}`, value);
+		}
+	}
+});
 
 function handlePageScripts() {
 	// Define the scripts and their target elements
@@ -54,7 +79,7 @@ function handlePageScripts() {
 		Object.values(pageScripts).forEach(({ elementSelector, script }) => {
 			const element = document.querySelector(elementSelector);
 			if (element && typeof script === "function") {
-					runScriptWithDelay(script);
+				runScriptWithDelay(script);
 			}
 		});
 	});
@@ -103,8 +128,6 @@ function run() {
 			content.innerHTML = content?.innerHTML.replace(/<br\s*\/?>/gi, " ");
 		}
 	});
-
-	createSettingsButton();
 
 	document
 		.querySelector(".label-menu_niveau0")
@@ -197,16 +220,6 @@ function run() {
 			}
 		}
 	);
-}
-
-function createSettingsButton() {
-	let btn = document.createElement("button");
-
-	btn.textContent = "Paramètres";
-
-	btn.insertAdjacentElement("beforeend", createElement(Settings));
-
-	document.querySelector(".ibe_droite")?.appendChild(btn);
 }
 
 check();

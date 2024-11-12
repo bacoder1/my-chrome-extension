@@ -1,10 +1,9 @@
 import React from 'react'; 
+import ColorPicker from './ui/ColorPicker';
 
 const Popup: React.FC = () => (
-  <div className="p-4">
-	  <h1 className="text-lg font-bold">
-		Hello, Chrome Extension!
-	  </h1> 
+  <div className="p-1 w-[21rem] h-[21rem] flex flex-col justify-end relative overflow-hidden">
+		<ColorPicker />
   </div> 
 );
 

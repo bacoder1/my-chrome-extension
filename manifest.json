@@ -19,5 +19,7 @@
 			"use_dynamic_url": false
 		}
 	],
-	"permissions": []
+	"permissions": [
+    "storage"
+  ]
 }

@@ -9,13 +9,13 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.tsx-loader-DeZn9Hfb.js"
+        "assets/content.tsx-loader-Bbq_MqeP.js"
       ],
       "matches": [
         "https://*.index-education.net/pronote/eleve.html"
       ],
       "css": [
-        "assets/content-D4n-9UgV.css"
+        "assets/content-DZMPER1s.css"
       ]
     }
   ],
@@ -34,10 +34,13 @@
         "https://*.index-education.net/*"
       ],
       "resources": [
-        "assets/content.tsx-Boog02n8.js"
+        "assets/colors-DwFrUbaF.js",
+        "assets/content.tsx-CGhLvSQa.js"
       ],
       "use_dynamic_url": false
     }
   ],
-  "permissions": []
+  "permissions": [
+    "storage"
+  ]
 }
