@@ -63,10 +63,10 @@ body {
 
 .dotty {
 	background-color: rgba(var(--accent-color-primary), 0.02) !important;
-	background-image: url("./assets/star-pattern.png") !important;
 	background-size: 112.5% !important;
 	background-repeat: repeat !important;
 	background-position: left top !important;
+	background-image: none !important;
 	padding: 3.56rem 3rem !important;
 
 	> .widgets-global-container {

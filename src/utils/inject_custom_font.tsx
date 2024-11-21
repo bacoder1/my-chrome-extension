@@ -3,7 +3,7 @@ export default function injectCustomFont() {
 	@font-face {
 			font-family: 'FixelVariable';
 			src: url('${chrome.runtime.getURL(
-				"src/fonts/fixel/FixelVariable.ttf"
+				"/fonts/fixel/FixelVariable.ttf"
 			)}') format('truetype');
 			font-weight: 100 900;
 			font-style: normal;
@@ -11,7 +11,7 @@ export default function injectCustomFont() {
 	@font-face {
 			font-family: 'FixelVariable';
 			src: url('${chrome.runtime.getURL(
-				"src/fonts/fixel/FixelVariableItalic.ttf"
+				"/fonts/fixel/FixelVariableItalic.ttf"
 			)}') format('truetype');
 			font-weight: 100 900;
 			font-style: italic;

@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import colorList from "../utils/colors.json";
-import "../styles/app/globals.css";
+import React, { useState } from "react";
+import colorList from "../../utils/data/colors.json";
+import "../../styles/app/globals.css";
 import { AnimatePresence, motion } from "motion/react";
-import Button from "./Button";
+import Button from "../Button";
+import InfoBubble from "../InfoBubble";
+import { useAppState } from "../../context/StateContext";
 
 interface colorListProps {
 	id: string;
@@ -16,24 +18,19 @@ interface colorListProps {
 	description: string;
 }
 
-const ColorPicker: React.FC = () => {
-	const [selectedColor, setSelectedColor] = useState(colorList[0]);
-
-	// Fetch the stored accent color once when the component mounts
-	useEffect(() => {
-		chrome.storage.sync.get("accentColor", (result) => {
-			setSelectedColor(result.accentColor);
-			console.log(result.accentColor, colorList[0]);
-		});
-	}, []);
+const ColorSelector: React.FC = () => {
+	const { themeColor, setThemeColor } = useAppState();
+	const [selectedColor, setSelectedColor] = useState(themeColor);
 
 	const setAccentColor = (color: colorListProps) => {
 		chrome.storage.sync.set({ accentColor: color });
-		setSelectedColor(color); // Update local state for immediate feedback
+		setThemeColor(color); // Update local state for immediate feedback
+		setSelectedColor(color)
 	};
 
 	return (
-		<>
+		<div className="flex flex-col p-1">
+			<InfoBubble message="Quelle est ta couleur préférée ?" />
 			<div className="grid w-fit gap-8 grid-cols-3 mb-8 mx-auto">
 				{colorList.map((color) => {
 					const isSelected = selectedColor.id === color.id;
@@ -48,7 +45,7 @@ const ColorPicker: React.FC = () => {
 								isSelected ? "outline outline-4 outline-offset-4" : ""
 							}`}
 							whileTap={{ scale: 0.8 }}
-              onClick={() => setSelectedColor(color)}
+							onClick={() => setSelectedColor(color)}
 							whileHover={{ scale: !isSelected ? 1.2 : 1 }}
 						/>
 					);
@@ -72,11 +69,14 @@ const ColorPicker: React.FC = () => {
 					<p className="opacity-0 my-5">{selectedColor.description}</p>
 				</AnimatePresence>
 			</div>
-			<Button style={{ backgroundColor: `rgba(${selectedColor.rgb.primary}, 1)` }} className="" onClick={() => setAccentColor(selectedColor)}>
+			<Button
+				style={{ backgroundColor: `rgba(${selectedColor.rgb.primary}, 1)` }}
+				className=""
+				onClick={() => setAccentColor(selectedColor)}>
 				Finaliser
 			</Button>
-		</>
+		</div>
 	);
 };
 
-export default ColorPicker;
+export default ColorSelector;

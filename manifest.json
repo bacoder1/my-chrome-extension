@@ -14,7 +14,7 @@
 	],
 	"web_accessible_resources": [
 		{
-			"resources": ["src/fonts/fixel/*.ttf"],
+			"resources": ["fonts/fixel/*.ttf"],
 			"matches": ["<all_urls>"],
 			"use_dynamic_url": false
 		}

@@ -16,7 +16,8 @@ import formatScheduleDateRange from "../utils/format_schedule_date_range";
 import injectCustomFont from "../utils/inject_custom_font";
 import home from "./home";
 import global from "./global";
-import colorList from "../utils/colors.json";
+import colorList from "../utils/data/colors.json";
+import icons from "../utils/data/icons.json";
 
 chrome.storage.sync.get("accentColor", (result) => {
 	let accentColor = result.accentColor;
@@ -39,6 +40,34 @@ chrome.storage.onChanged.addListener((changes, _namespace) => {
 		for (let key in changes.accentColor.newValue.rgb) {
 			const value = changes.accentColor.newValue.rgb[key];
 			document.body.style.setProperty(`--accent-color-${key}`, value);
+		}
+	}
+});
+
+chrome.storage.sync.get("siteIconSrc", (result) => {
+	let siteIconSrc = result.siteIconSrc;
+
+	if (!siteIconSrc) {
+		chrome.storage.sync.set({ siteIconSrc: icons[0].imageSrc });
+	} else {
+		document.querySelectorAll("link[rel='icon']").forEach((el) => el.remove());
+
+		const link = document.createElement("link");
+		link.rel = "icon";
+		link.href = siteIconSrc; // URL of the new favicon
+		document.head.appendChild(link);
+	}
+});
+
+chrome.storage.onChanged.addListener((changes, _namespace) => {
+	console.log("oh");
+	if (changes.siteIconSrc) {
+		console.log("hi");
+		const link: HTMLLinkElement | null =
+			document.querySelector("link[rel='icon']");
+
+		if (link) {
+			link.href = changes.siteIconSrc.newValue;
 		}
 	}
 });

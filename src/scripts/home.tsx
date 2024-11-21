@@ -51,6 +51,61 @@ export default function home() {
 		el.style.animationDuration = `${randomDuration}s`;
 	});
 
+	chrome.storage.sync.get("widgets", (result) => {
+		let widgets = result.widgets;
+
+		console.log(widgets);
+
+		// if (!widgets) {
+		widgets = Array.from(document.querySelectorAll("section.widget"))
+			.map((element) => {
+				// Check if the element is not hidden (display !== "none")
+				if (window.getComputedStyle(element).display === "none") {
+					return null; // Skip this widget by returning null
+				}
+
+				// Extract the label from the element
+				let label = element.querySelector("header h2 span")?.textContent || "";
+				label = label.trim();
+
+				if (label) {
+					const exceptions: Record<string, string> = {
+						"Informations & Sondages": "Infos",
+						"Actualités & Documents du CDI": "CDI",
+						"Carnet de correspondance": "Carnet",
+						"Dernières ressources pédagogiques": "Ressources",
+						"Dernières évaluations": "Evals.",
+						"Dernières notes": "Notes",
+					};
+
+					// Apply exception mapping
+					return exceptions[label] ?? label;
+				}
+
+				return null; // If no valid label, return null
+			})
+			.filter((label) => label !== null); // Remove null values from the array
+
+		console.log("set storage to " + widgets);
+
+		// }
+
+		chrome.storage.sync.set({ widgets });
+		// let accentColor = result.accentColor;
+
+		// if (!accentColor) {
+		// 	// If `accentColor` is empty, set it to the first color in colorList
+		// 	accentColor = colorList[0];
+		// 	chrome.storage.sync.set({ accentColor });
+		// }
+
+		// // Now apply accentColor's RGB values to CSS variables
+		// for (let key in accentColor.rgb) {
+		// 	const value = accentColor.rgb[key];
+		// 	document.body.style.setProperty(`--accent-color-${key}`, value);
+		// }
+	});
+
 	// wobble
 
 	// widgets.forEach((widget) => {

@@ -18,7 +18,7 @@ const Button: React.FC<ButtonProps> = ({
 }: ButtonProps) => {
 	return (
 		<motion.button
-			className={`uppercase rounded-xl text-white font-bold transition-colors text-lg tracking-widest text-center h-12 m-2 ${className}`}
+			className={`uppercase rounded-xl text-white font-semibold transition-colors text-lg tracking-wider text-center h-12 m-2 ${className}`}
 			onClick={onClick}
 			style={style}
 			disabled={disabled}
