@@ -1,6 +1,5 @@
 @import "./header.css";
 @import "./widgets/homework.css";
-@import "./widgets/info.css";
 @import "./widgets/other.css";
 @import "./widgets/resources.css";
 @import "./widgets/timetable.css";
@@ -61,11 +60,18 @@ body {
 	font-weight: 500 !important;
 }
 
+* {
+	scrollbar-color: #d3d1cb rgba(0, 0, 0, 0) !important;
+	scrollbar-width: auto !important;
+}
+
+*::-webkit-scrollbar {
+	width: auto !important;
+	height: auto !important;
+}
+
 .dotty {
 	background-color: rgba(var(--accent-color-primary), 0.02) !important;
-	background-size: 112.5% !important;
-	background-repeat: repeat !important;
-	background-position: left top !important;
 	background-image: none !important;
 	padding: 3.56rem 3rem !important;
 
@@ -122,13 +128,13 @@ body {
 .widget.ressourcepedagogique .pj-date-contain a {
 	display: 0.28rem 0.56rem !important;
 	border-radius: 0.5rem !important;
-	background-color: rgba(var(--dark-blue), 0.15) !important;
-	color: #5e5e5e !important;
+	background-color: rgba(0, 106, 145, 0.15) !important;
+	color: rgba(0, 106, 145, 1) !important;
 	transition-duration: 0.2s !important;
 	transition-timing-function: ease-out !important;
 
 	&:hover {
-		background-color: rgba(var(--dark-blue), 0.3) !important;
+		background-color: rgba(rgba(0, 106, 145, 0.15), 0.3) !important;
 	}
 }
 
@@ -228,7 +234,8 @@ div.cta-conteneur {
 	--widget-color: 209, 136, 0;
 }
 
-.agenda {
+.agenda,
+.actualites {
 	--widget-color: var(--primary-green);
 }
 
@@ -287,6 +294,29 @@ div.cta-conteneur {
 			margin-top: 0.5rem !important;
 		}
 	}
+
+	&.actualites {
+		ul.liste-imbriquee {
+			padding: 0 !important;
+
+			> li {
+				padding: 0 !important;
+				margin: 0 !important;
+
+				&:hover {
+					background-color: transparent !important;
+				}
+			}
+		}
+	}
+
+	.wrap {
+		color: rgba(var(--black), 0.5);
+
+		h4 {
+			color: rgba(var(--black), 1);
+		}
+	}
 }
 /* ds, agenda, vie sco */
 
@@ -294,7 +324,8 @@ div.cta-conteneur {
 .widget.agenda,
 .widget.viescolaire,
 .widget.notes,
-.widget.competences {
+.widget.competences,
+.widget.actualites {
 	ul {
 		overflow: hidden;
 

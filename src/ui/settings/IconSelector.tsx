@@ -1,29 +1,15 @@
-import { createElement, useEffect, useRef } from "react";
-import { Checkbox, FileInput, List, ListItem, Tabs } from "../Components";
+import { createElement, useEffect, useRef, useState } from "react";
+import { FileInput, Tabs } from "../Components";
 import InfoBubble from "../InfoBubble";
-import icons from "../../utils/data/icons.json";
+import icons from "../../../public/data/icons.json";
 import "emoji-picker-element";
 import fr from "emoji-picker-element/i18n/fr";
-// import { Image } from "lucide-react";
-import { createElement as createLucideElement } from "lucide";
-import { Check } from "lucide";
 import { Image } from "lucide-react";
 import resizeImage from "../../utils/resize_image";
+import renderEmojiToImage from "../../utils/emoji_to_image";
 
 const IconSelector: React.FC = () => {
-	const selectedIconSrc = useRef<string | ArrayBuffer>(icons[0].imageSrc);
-	const ref: any = useRef(null);
-	// let selectedIconSrcCategory = { id: "Îcones", index: 0 };
-	// if (selectedIconSrc.includes("twemoji")) {
-	// 	selectedIconSrcCategory = { id: "Émoji", index: 1 };
-	// } else if (!icons.map((icon) => icon.imageSrc).includes(selectedIconSrc)) {
-	// 	selectedIconSrcCategory = { id: "Charger", index: 2 };
-	// }
-	const selectedEmoji: React.MutableRefObject<null | HTMLElement> =
-		useRef(null);
-
-	const toUnicode = (char: string) =>
-		char.codePointAt(0)?.toString(16).toLowerCase();
+	const selectedIconSrc = useRef<string>(icons[0].url);
 
 	useEffect(() => {
 		chrome.storage.sync.get("siteIconSrc", (result) => {
@@ -32,40 +18,25 @@ const IconSelector: React.FC = () => {
 	}, []);
 
 	const IconSection: React.FC = () => {
-		return (
-			<List>
-				{icons.map((icon, index) => (
-					<ListItem
-						title={icon.label}
-						icon={icon.imageSrc}
-						index={index}
-						iconSize={28}
-						checkbox={
-							<Checkbox
-								checked={selectedIconSrc.current === icon.imageSrc}
-								onClick={() => {
-									selectedIconSrc.current = icon.imageSrc;
-									chrome.storage.sync.set({ siteIconSrc: icon.imageSrc });
-									console.log("set storage to " + icon.imageSrc);
-								}}
-								className="mr-2"
-							/>
-						}
-					/>
-				))}
-			</List>
-		);
-	};
-
-	const EmojiSection: React.FC = () => {
-		// const isFirstRun = useRef(true);
+		const ref: any = useRef(null);
 
 		useEffect(() => {
 			ref.current.i18n = fr;
 			ref.current.locale = "fr";
-			ref.current.dataSource =
-				"https://cdn.jsdelivr.net/npm/emoji-picker-element-data@%5E1/fr/emojibase/data.json";
-		}, [ref, ref.current]);
+			ref.current.dataSource = "/data/decoy.json";
+			ref.current.customEmoji = icons;
+
+			const style = document.createElement("style");
+			style.textContent = 
+			`.nav {
+				display: none;
+			}
+
+			.skintone-button-wrapper {
+				display: none !important;
+			}`;
+			ref.current.shadowRoot.appendChild(style);
+		}, []);
 
 		useEffect(() => {
 			const element = ref.current;
@@ -75,63 +46,76 @@ const IconSelector: React.FC = () => {
 				const handleEmojiClick = (event: any) => {
 					console.log("Emoji clicked", event);
 
-					selectedIconSrc.current = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${toUnicode(
-						event.detail.unicode
-					)}.svg`;
+					const emoji = event.detail.emoji.url;
+
+					selectedIconSrc.current = emoji;
 					chrome.storage.sync.set({
-						siteIconSrc: `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${toUnicode(
-							event.detail.unicode
-						)}.svg`,
+						siteIconSrc: emoji,
 					});
 				};
 
-				const toggleEmojiCheck = (event: any) => {
-					console.log(event);
-					if (selectedEmoji.current) {
-						// Remove the "selected" styling and check icon from the previously selected element
-						const existingCheckIcon =
-							selectedEmoji.current.querySelector(".check-icon");
-						existingCheckIcon?.remove();
-					}
-
-					selectedEmoji.current = event.target;
-
-					if (selectedEmoji.current) {
-						const checkIcon = document.createElement("span");
-						checkIcon.className = "check-icon";
-
-						// Append an SVG of the check icon inside the span
-						checkIcon.insertAdjacentElement(
-							"beforeend",
-							createLucideElement(Check)
-						);
-
-						// Append the check icon to the selected element
-						selectedEmoji.current.style.position = "relative";
-						selectedEmoji.current.appendChild(checkIcon);
-					}
-				};
-
 				ref.current.addEventListener("emoji-click", handleEmojiClick);
-				ref.current.addEventListener("click", toggleEmojiCheck);
 
 				return () => {
 					ref.current?.removeEventListener("emoji-click", handleEmojiClick);
-					ref.current?.remove("click", toggleEmojiCheck);
 				};
 			}
 		}, [ref, ref.current]);
 
 		return (
-			<List>
+			<>
 				{createElement("emoji-picker", {
 					ref,
 				})}
-			</List>
+			</>
+		);
+	};
+
+	const EmojiSection: React.FC = () => {
+		const ref: any = useRef(null);
+
+		useEffect(() => {
+			ref.current.i18n = fr;
+			ref.current.locale = "fr";
+			ref.current.dataSource =
+				"https://cdn.jsdelivr.net/npm/emoji-picker-element-data@%5E1/fr/emojibase/data.json";
+		}, []);
+
+		useEffect(() => {
+			const element = ref.current;
+			console.log("OMG YOURE REDOGING SDADS2AZD");
+
+			if (element) {
+				const handleEmojiClick = (event: any) => {
+					console.log("Emoji clicked", event);
+
+					const emoji = renderEmojiToImage(event.detail.unicode);
+
+					selectedIconSrc.current = emoji;
+					chrome.storage.sync.set({
+						siteIconSrc: emoji,
+					});
+				};
+
+				ref.current.addEventListener("emoji-click", handleEmojiClick);
+
+				return () => {
+					ref.current?.removeEventListener("emoji-click", handleEmojiClick);
+				};
+			}
+		}, [ref, ref.current]);
+
+		return (
+			<>
+				{createElement("emoji-picker", {
+					ref,
+				})}
+			</>
 		);
 	};
 
 	const UploadSection: React.FC = () => {
+		const [loading, setLoading] = useState(false);
 		// const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 		const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,7 +129,7 @@ const IconSelector: React.FC = () => {
 			const clipboardItems = event.clipboardData.items;
 			for (let i = 0; i < clipboardItems.length; i++) {
 				const item = clipboardItems[i];
-				if (item.type.startsWith('image/')) {
+				if (item.type.startsWith("image/")) {
 					const file = item.getAsFile();
 					if (file) {
 						processFile(file);
@@ -162,45 +146,38 @@ const IconSelector: React.FC = () => {
 				processFile(file);
 			}
 		};
-	
+
 		// Process image file (resize and save to storage)
 		const processFile = async (file: File) => {
+			setLoading(true);
 			const reader = new FileReader();
 			reader.onload = async () => {
 				let base64Image = reader.result as string | null;
-	
+
 				if (base64Image) {
 					base64Image = await resizeImage(base64Image, 32, 32);
 					if (base64Image) {
 						selectedIconSrc.current = base64Image;
 						chrome.storage.sync.set({ siteIconSrc: base64Image });
-						console.log('Image saved to Chrome Storage!', base64Image);
+						console.log("Image saved to Chrome Storage!", base64Image);
 					}
 				}
 			};
 			reader.readAsDataURL(file);
-			console.log('Selected file:', file);
+
+			setLoading(false);
+			console.log("Selected file:", file);
 		};
 
 		return (
 			<div onPaste={handlePaste}>
-				{/* <ModalButton label="Charger une image" icon={Image} /> */}
-				{/* <div className="flex relative bg-[#E9E9E9] justify-center transition-colors ease-in-out hover:bg-[#DEDADA] rounded-lg h-9 cursor-pointer text-[#656565] gap-2 items-center">
-					<Image size={20} />
-					<p className="font-semibold">Charger une image</p>
-					<input
-						type="file"
-						ref={fileInputRef}
-						className="fixed -top-full size-full"
-						onChange={handleFileChange}
-					/>
-				</div> */}
 				<FileInput
 					onChange={(event) => handleFileChange(event)}
 					icon={Image}
 					label="Choisir une image"
 					type="image"
 					onDrop={handleDrop}
+					loading={loading}
 				/>
 			</div>
 		);
@@ -210,11 +187,16 @@ const IconSelector: React.FC = () => {
 		<div className="flex flex-col p-2">
 			<InfoBubble message="Choisis l'icône du site !" />
 			<Tabs
-				tabLabels={["Îcones", "Émoji", "Charger"]}
+				tabLabels={[
+					{ label: "Îcones", tabId: "icon" },
+					{ label: "Émoji", tabId: "emoji" },
+					{ label: "Charger", tabId: "upload" },
+				]}
+				className="mt-4"
 				tabs={[
-					{ id: "Îcones", content: <IconSection /> },
-					{ id: "Émoji", content: <EmojiSection /> },
-					{ id: "Charger", content: <UploadSection /> },
+					{ id: "icon", content: <IconSection /> },
+					{ id: "emoji", content: <EmojiSection /> },
+					{ id: "upload", content: <UploadSection /> },
 				]}
 				// defaultTab={selectedIconSrcCategory.id}
 			/>

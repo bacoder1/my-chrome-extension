@@ -17,7 +17,7 @@ import injectCustomFont from "../utils/inject_custom_font";
 import home from "./home";
 import global from "./global";
 import colorList from "../utils/data/colors.json";
-import icons from "../utils/data/icons.json";
+import icons from "../../public/data/icons.json";
 
 chrome.storage.sync.get("accentColor", (result) => {
 	let accentColor = result.accentColor;
@@ -48,7 +48,7 @@ chrome.storage.sync.get("siteIconSrc", (result) => {
 	let siteIconSrc = result.siteIconSrc;
 
 	if (!siteIconSrc) {
-		chrome.storage.sync.set({ siteIconSrc: icons[0].imageSrc });
+		chrome.storage.sync.set({ siteIconSrc: icons[0].url });
 	} else {
 		document.querySelectorAll("link[rel='icon']").forEach((el) => el.remove());
 

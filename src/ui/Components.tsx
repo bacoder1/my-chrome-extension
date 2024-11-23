@@ -1,7 +1,8 @@
 import { Check, LucideIcon } from "lucide-react";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { ColorListItemProps, useAppState } from "../context/StateContext";
 import { AnimatePresence, motion } from "motion/react";
+import Spinner from "./Spinner";
 
 interface ListProps {
 	style?: React.CSSProperties;
@@ -199,55 +200,102 @@ interface Tab {
 	content: React.ReactNode;
 }
 
+interface TabLabel {
+	label: string;
+	tabId: string;
+}
+
 interface TabsProps {
 	tabs: Tab[];
-	tabLabels: string[];
+	tabLabels: TabLabel[];
 	defaultTab?: string;
 	onClick?: () => void;
+	className?: string;
 }
 
 export const Tabs: React.FC<TabsProps> = ({
 	tabs,
 	tabLabels,
-	defaultTab = tabLabels[0],
+	defaultTab = tabLabels[0].tabId,
 	onClick,
+	className = "",
 }: TabsProps) => {
 	const [selectedTab, setSelectedTab] = useState(defaultTab);
+	const [labelSizes, setLabelSizes] = useState<{
+		[key: string]: { labelWidth: number; labelLeft: number };
+	}>({});
+	const tabRef = useRef(null);
 
-	const activeTab = tabs.find((tab) => tab.id === selectedTab)!;
+	const activeTab = tabs.find((tab) => tab.id === selectedTab);
+
+	useEffect(() => {
+		const sizes: {
+			[key: string]: { labelWidth: number; labelLeft: number };
+		} = {};
+
+		const parent = document.querySelector(".tab-labels");
+		if (!parent || !(parent instanceof HTMLElement)) return;
+
+		document.querySelectorAll(".tab-label").forEach((label) => {
+			const tab = label.id.replace("tab-label-", "");
+
+			if (label instanceof HTMLElement) {
+				const labelWidth = label.offsetWidth;
+				const labelLeft = label.offsetLeft - parent.offsetLeft;
+
+				sizes[tab] = { labelWidth, labelLeft };
+			}
+		});
+
+		setLabelSizes(sizes);
+		console.log(sizes);
+	}, [tabs, selectedTab]);
 
 	return (
-		<motion.div layout className="flex flex-col" onClick={onClick}>
-			<div className="flex gap-2 mb-4">
+		<motion.div
+			layout
+			className={`flex flex-col ${className}`}
+			onClick={onClick}>
+			<div className="flex gap-2 tab-labels">
 				{tabLabels.map((label) => {
-					const isSelected = selectedTab === label;
+					const isSelected = selectedTab === label.tabId;
 
 					return (
 						<div
-							className={`font-semibold select-none relative cursor-pointer rounded-lg delay-200 transition-colors ease-out hover:bg-black/10 px-2 py-1 opacity-40 text-black/45 text-sm uppercase`}
+							className={`font-semibold tab-label select-none relative cursor-pointer rounded-lg delay-200 transition-colors ease-out px-2 py-1 opacity-40 text-black/25 text-sm uppercase ${!isSelected ? "hover:bg-black/10" : "text-black/50"}`}
+							id={`tab-label-${label.tabId}`}
 							style={{ opacity: isSelected ? 1 : 0.3 }}
-							onClick={() => setSelectedTab(label)}>
-							{label}
-							<motion.div
+							onClick={() => setSelectedTab(label.tabId)}>
+							{label.label}
+							{/* <motion.div
 								animate={{ opacity: isSelected ? 1 : 0 }}
 								className="absolute w-full left-0 h-[1px] bottom-0 bg-black/45"
-							/>
+							/> */}
 						</div>
 					);
 				})}
 			</div>
-			<div className="relative min-h-[30rem]">
-				<AnimatePresence>
-					<motion.div
-						key={selectedTab}
-						initial={{ x: "100%", opacity: 0 }}
-						animate={{ x: "0%", opacity: 1 }}
-						exit={{ x: "-100%", opacity: 0 }}
-						className="absolute w-full top-0 left-0">
-						{activeTab.content}
-					</motion.div>
-				</AnimatePresence>
+			<div className="h-[1px] mb-4 w-full">
+				<motion.div
+					className="h-full bg-black/65"
+					animate={{
+						x: labelSizes[selectedTab]?.labelLeft || 0,
+						width: labelSizes[selectedTab]?.labelWidth || 0,
+					}}
+				/>
 			</div>
+			<AnimatePresence mode="wait">
+				<motion.div
+					key={selectedTab}
+					initial={{ y: -10, opacity: 0 }}
+					animate={{ y: 0, opacity: 1 }}
+					exit={{ y: 10, opacity: 0 }}
+					transition={{ duration: 0.2 }}
+					className="w-full tabs"
+					ref={tabRef}>
+					{activeTab && activeTab.content}
+				</motion.div>
+			</AnimatePresence>
 		</motion.div>
 	);
 };
@@ -263,6 +311,7 @@ interface FileInputProps {
 	type: string;
 	onDrop?: (event: any) => void;
 	caption?: boolean;
+	loading?: boolean;
 }
 
 export const FileInput: React.FC<FileInputProps> = ({
@@ -276,8 +325,10 @@ export const FileInput: React.FC<FileInputProps> = ({
 	type,
 	onDrop,
 	caption = true,
+	loading = false,
 }: FileInputProps) => {
 	const [isHovering, setisHovering] = useState<boolean>(false);
+
 	return (
 		<React.Fragment>
 			<label
@@ -287,9 +338,11 @@ export const FileInput: React.FC<FileInputProps> = ({
 				style={style}
 				onClick={onClick}
 				onDrop={onDrop}
-				onDragEnter={(event: any) => {
+				onDragEnter={() => {
 					setisHovering(true);
 					console.log("hi");
+				}}
+				onDragOver={(event: any) => {
 					event.preventDefault();
 				}}
 				onDragLeave={() => {
@@ -297,18 +350,22 @@ export const FileInput: React.FC<FileInputProps> = ({
 				}}>
 				{Icon && <Icon size={iconSize} />}
 				{label}
+				{loading ? <Spinner /> : null}
 				{type === "image" ? (
 					<input
 						type="file"
 						className="fixed -top-full pointer-events-none opacity-0"
+						accept="image/png, image/jpeg"
 						onChange={(event) => onChange && onChange(event)}
 					/>
 				) : null}
 			</label>
-			{caption && <p className="mt-3 text-[#ACABA9] text-center mx-auto text-xs">
-				ou Ctrl+V pour coller une image <br />
-				ou déposez une image
-			</p>}
+			{caption && (
+				<p className="mt-3 text-[#ACABA9] text-center mx-auto text-xs">
+					ou Ctrl+V pour coller une image <br />
+					ou déposez une image
+				</p>
+			)}
 		</React.Fragment>
 	);
 };

@@ -1,0 +1,40 @@
+// vite.config.ts
+import { defineConfig } from "file:///C:/Users/LENOVO%20LEGION/Desktop/my-chrome-extension/node_modules/vite/dist/node/index.js";
+import react from "file:///C:/Users/LENOVO%20LEGION/Desktop/my-chrome-extension/node_modules/@vitejs/plugin-react/dist/index.mjs";
+import { crx } from "file:///C:/Users/LENOVO%20LEGION/Desktop/my-chrome-extension/node_modules/@crxjs/vite-plugin/dist/index.mjs";
+
+// manifest.json
+var manifest_default = {
+  manifest_version: 3,
+  name: "My Chrome Extension",
+  version: "1.0.0",
+  description: "A Chrome extension built with Vite and React",
+  action: {
+    default_popup: "index.html"
+  },
+  content_scripts: [
+    {
+      js: ["src/scripts/content.tsx"],
+      matches: ["https://*.index-education.net/pronote/eleve.html"]
+    }
+  ],
+  web_accessible_resources: [
+    {
+      resources: ["fonts/fixel/*.ttf"],
+      matches: ["<all_urls>"],
+      use_dynamic_url: false
+    }
+  ],
+  permissions: [
+    "storage"
+  ]
+};
+
+// vite.config.ts
+var vite_config_default = defineConfig({
+  plugins: [react(), crx({ manifest: manifest_default })]
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiLCAibWFuaWZlc3QuanNvbiJdLAogICJzb3VyY2VzQ29udGVudCI6IFsiY29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2Rpcm5hbWUgPSBcIkM6XFxcXFVzZXJzXFxcXExFTk9WTyBMRUdJT05cXFxcRGVza3RvcFxcXFxteS1jaHJvbWUtZXh0ZW5zaW9uXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ZpbGVuYW1lID0gXCJDOlxcXFxVc2Vyc1xcXFxMRU5PVk8gTEVHSU9OXFxcXERlc2t0b3BcXFxcbXktY2hyb21lLWV4dGVuc2lvblxcXFx2aXRlLmNvbmZpZy50c1wiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9pbXBvcnRfbWV0YV91cmwgPSBcImZpbGU6Ly8vQzovVXNlcnMvTEVOT1ZPJTIwTEVHSU9OL0Rlc2t0b3AvbXktY2hyb21lLWV4dGVuc2lvbi92aXRlLmNvbmZpZy50c1wiO2ltcG9ydCB7IGRlZmluZUNvbmZpZyB9IGZyb20gXCJ2aXRlXCI7XG5pbXBvcnQgcmVhY3QgZnJvbSBcIkB2aXRlanMvcGx1Z2luLXJlYWN0XCI7XG5pbXBvcnQgeyBjcnggfSBmcm9tIFwiQGNyeGpzL3ZpdGUtcGx1Z2luXCI7XG5pbXBvcnQgbWFuaWZlc3QgZnJvbSBcIi4vbWFuaWZlc3QuanNvblwiO1xuXG5leHBvcnQgZGVmYXVsdCBkZWZpbmVDb25maWcoe1xuXHRwbHVnaW5zOiBbcmVhY3QoKSwgY3J4KHsgbWFuaWZlc3QgfSldLFxufSk7XG4iLCAie1xyXG5cdFwibWFuaWZlc3RfdmVyc2lvblwiOiAzLFxyXG5cdFwibmFtZVwiOiBcIk15IENocm9tZSBFeHRlbnNpb25cIixcclxuXHRcInZlcnNpb25cIjogXCIxLjAuMFwiLFxyXG5cdFwiZGVzY3JpcHRpb25cIjogXCJBIENocm9tZSBleHRlbnNpb24gYnVpbHQgd2l0aCBWaXRlIGFuZCBSZWFjdFwiLFxyXG5cdFwiYWN0aW9uXCI6IHtcclxuXHRcdFwiZGVmYXVsdF9wb3B1cFwiOiBcImluZGV4Lmh0bWxcIlxyXG5cdH0sXHJcblx0XCJjb250ZW50X3NjcmlwdHNcIjogW1xyXG5cdFx0e1xyXG5cdFx0XHRcImpzXCI6IFtcInNyYy9zY3JpcHRzL2NvbnRlbnQudHN4XCJdLFxyXG5cdFx0XHRcIm1hdGNoZXNcIjogW1wiaHR0cHM6Ly8qLmluZGV4LWVkdWNhdGlvbi5uZXQvcHJvbm90ZS9lbGV2ZS5odG1sXCJdXHJcblx0XHR9XHJcblx0XSxcclxuXHRcIndlYl9hY2Nlc3NpYmxlX3Jlc291cmNlc1wiOiBbXHJcblx0XHR7XHJcblx0XHRcdFwicmVzb3VyY2VzXCI6IFtcImZvbnRzL2ZpeGVsLyoudHRmXCJdLFxyXG5cdFx0XHRcIm1hdGNoZXNcIjogW1wiPGFsbF91cmxzPlwiXSxcclxuXHRcdFx0XCJ1c2VfZHluYW1pY191cmxcIjogZmFsc2VcclxuXHRcdH1cclxuXHRdLFxyXG5cdFwicGVybWlzc2lvbnNcIjogW1xyXG4gICAgXCJzdG9yYWdlXCJcclxuICBdXHJcbn1cclxuIl0sCiAgIm1hcHBpbmdzIjogIjtBQUFvVixTQUFTLG9CQUFvQjtBQUNqWCxPQUFPLFdBQVc7QUFDbEIsU0FBUyxXQUFXOzs7QUNGcEI7QUFBQSxFQUNDLGtCQUFvQjtBQUFBLEVBQ3BCLE1BQVE7QUFBQSxFQUNSLFNBQVc7QUFBQSxFQUNYLGFBQWU7QUFBQSxFQUNmLFFBQVU7QUFBQSxJQUNULGVBQWlCO0FBQUEsRUFDbEI7QUFBQSxFQUNBLGlCQUFtQjtBQUFBLElBQ2xCO0FBQUEsTUFDQyxJQUFNLENBQUMseUJBQXlCO0FBQUEsTUFDaEMsU0FBVyxDQUFDLGtEQUFrRDtBQUFBLElBQy9EO0FBQUEsRUFDRDtBQUFBLEVBQ0EsMEJBQTRCO0FBQUEsSUFDM0I7QUFBQSxNQUNDLFdBQWEsQ0FBQyxtQkFBbUI7QUFBQSxNQUNqQyxTQUFXLENBQUMsWUFBWTtBQUFBLE1BQ3hCLGlCQUFtQjtBQUFBLElBQ3BCO0FBQUEsRUFDRDtBQUFBLEVBQ0EsYUFBZTtBQUFBLElBQ1o7QUFBQSxFQUNGO0FBQ0Y7OztBRG5CQSxJQUFPLHNCQUFRLGFBQWE7QUFBQSxFQUMzQixTQUFTLENBQUMsTUFBTSxHQUFHLElBQUksRUFBRSwyQkFBUyxDQUFDLENBQUM7QUFDckMsQ0FBQzsiLAogICJuYW1lcyI6IFtdCn0K

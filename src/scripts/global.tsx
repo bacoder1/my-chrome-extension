@@ -9,9 +9,9 @@ export default function global() {
   //   }
   // });
 
-  document.querySelectorAll(".widget.travailafaire .liste-imbriquee ul li > .conteneur-item .titre-matiere, .widget.ressourcepedagogique ul li .wrap h3, .widget.notes ul li h3 > span").forEach((element: Element) => changeSubjectName(element))
+  document.querySelectorAll(".widget.travailafaire .liste-imbriquee ul li > .conteneur-item .titre-matiere, .widget.ressourcepedagogique ul li .wrap h3, .widget.notes ul li h3 > span, .widget.competences ul li .wrap h3 > span").forEach((element: Element) => changeSubjectName(element))
 
-  document.querySelectorAll(".widget.edt ul.container-cours > li.libelle-cours").forEach((element: Element) => changeSubjectName(element, false))
+  document.querySelectorAll(".widget.edt ul.container-cours > li.libelle-cours, .widget.ds .infos-ds-conteneur > h3").forEach((element: Element) => changeSubjectName(element, false))
 
   document.querySelectorAll(".widget.edt ul.liste-cours > li").forEach((element: any) => {
     const colorBar = element.querySelector(".trait-matiere");

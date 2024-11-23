@@ -4,6 +4,9 @@ export function formatSubjectName(subject = "") {
 	// Process the input string: replace dots and underscores with spaces, trim, and convert to lowercase
 	let processedString = subject.replace(/[,._]/g, " ").trim().toLowerCase();
 
+	// remove everything past >
+	processedString = processedString.split(">")[0];
+
 	// remove LV1, LV2, etc.
 	processedString = processedString.replace(/lv\d/g, "").trim();
 
