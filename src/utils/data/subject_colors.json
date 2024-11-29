@@ -1,4 +1,4 @@
-export let subjectColors = [
+[
 	"#D1005A",
 	"#BE4541",
 	"#D54829",
@@ -20,5 +20,5 @@ export let subjectColors = [
 	"#CC33BF",
 	"#BE417F",
 	"#E36DB8",
-	"#7F7F7F",
-];
+	"#7F7F7F"
+]

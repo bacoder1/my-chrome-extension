@@ -29,6 +29,7 @@ export const subjectEmojis: Record<string, string> = {
 	ingenieur: "🔧",
 	musique: "🎼",
 	musical: "🎼",
+	musicale: "🎼",
 	classe: "🏫",
 	vie: "🧬",
 	ses: "💰",

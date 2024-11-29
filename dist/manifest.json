@@ -4,18 +4,19 @@
   "version": "1.0.0",
   "description": "A Chrome extension built with Vite and React",
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "index.html",
+    "default_icon": "logo.png"
   },
   "content_scripts": [
     {
       "js": [
-        "assets/content.tsx-loader-DrIEgz_f.js"
+        "assets/content.tsx-loader-D5iU8IhI.js"
       ],
       "matches": [
         "https://*.index-education.net/pronote/eleve.html"
       ],
       "css": [
-        "assets/content-BKhtk0P1.css"
+        "assets/content-7YDP4q22.css"
       ]
     }
   ],
@@ -35,7 +36,7 @@
       ],
       "resources": [
         "assets/icons-BAtk9n0V.js",
-        "assets/content.tsx-BebpGFkm.js"
+        "assets/content.tsx-Cyc5LLkj.js"
       ],
       "use_dynamic_url": false
     }

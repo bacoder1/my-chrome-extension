@@ -19,6 +19,10 @@ body {
 	font-style: italic;
 }
 
+input[type="text"] {
+	@apply outline-none border-spacing-[2px] border-b-2 !border-transparent focus-within:!border-[--accent-color] -mb-[1.5px] transition-[border-color] font-medium text-base;
+}
+
 .grid-stack-item-content {
 	@apply uppercase p-2 rounded-xl bg-white !text-black/15 tracking-[1px] font-semibold select-none;
 	border: 1px solid rgba(0, 0, 0, 0.15);

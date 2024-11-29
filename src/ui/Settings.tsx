@@ -3,7 +3,7 @@ import settingsPages from "../utils/data/settingPages";
 import { settingsPage } from "../types/types";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
-import { List, ListHeader, ListItem } from "./Components";
+import { Heading, List, ListItem } from "./Components";
 
 const Settings: React.FC = () => {
 	const [selectedSetting, setSelectedSetting] = useState<settingsPage | null>(
@@ -36,16 +36,16 @@ const Settings: React.FC = () => {
 	);
 
 	return (
-		<React.Fragment>
+		<div className="relative">
 			<motion.div
-				className="absolute select-none bottom-0 p-2 w-full"
+				className="absolute pt-14 select-none top-0 p-2 w-full"
 				animate={{
 					x: selectedSetting === null ? "0" : "-100vw",
 					opacity: selectedSetting === null ? 1 : 0,
 				}}>
 				{settingCategories.map((category) => (
 					<React.Fragment key={category}>
-						<ListHeader title={category} />
+						<Heading title={category} />
 						<List>
 							{settingsPages
 								.filter((setting) => setting.category === category)
@@ -75,7 +75,7 @@ const Settings: React.FC = () => {
 					</motion.div>
 				)}
 			</AnimatePresence>
-		</React.Fragment>
+		</div>
 	);
 };
 

@@ -70,10 +70,9 @@ const ColorSelector: React.FC = () => {
 				</AnimatePresence>
 			</div>
 			<Button
-				style={{ backgroundColor: `rgba(${selectedColor.rgb.primary}, 1)` }}
-				className=""
+				accentColor={`rgba(${selectedColor.rgb.primary}, 1)`}
 				onClick={() => setAccentColor(selectedColor)}>
-				Finaliser
+				Valider
 			</Button>
 		</div>
 	);

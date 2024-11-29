@@ -6,7 +6,7 @@ import "emoji-picker-element";
 import fr from "emoji-picker-element/i18n/fr";
 import { Image } from "lucide-react";
 import resizeImage from "../../utils/resize_image";
-import renderEmojiToImage from "../../utils/emoji_to_image";
+import renderEmojiToImage from "../../utils/emoji/emoji_to_image";
 
 const IconSelector: React.FC = () => {
 	const selectedIconSrc = useRef<string>(icons[0].url);

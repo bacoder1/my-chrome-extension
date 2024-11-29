@@ -1,4 +1,4 @@
-import hexToRgb from "./hex_to_rgb";
+import hexToRgb from "./color/hex_to_rgb";
 import rgbToHex from "./rgb_to_hex";
 
 export default function getClosestColor(rgbInput: string, hexColors: string[]) {
