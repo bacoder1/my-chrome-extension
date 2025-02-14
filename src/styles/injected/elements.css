@@ -1,0 +1,33 @@
+.colibri-button {
+  --color: 94, 94, 94;
+  --background: var(--light-gray);
+
+  padding: 0.5rem 0.85rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  font-size: var(--text-md) !important;
+  color: rgba(var(--color), 0.6) !important;
+  border-radius: 9999px !important;
+  background-color: rgba(var(--background), 0.1) !important;
+  width: fit-content;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition:
+  background-color 0.3s ease-in-out,
+  color 0.3s ease-in-out !important;
+  
+  &:hover {
+    background-color: rgba(var(--background), 0.25) !important;
+    color: rgba(var(--color), 0.8) !important;
+  }
+  
+  > svg.icon {
+    margin-right: 0.375rem !important;
+    border: none !important;
+    height: 1.6rem !important;
+    width: 1.6rem !important;
+    stroke-width: 3px !important;
+    display: inline-block;
+  }
+}

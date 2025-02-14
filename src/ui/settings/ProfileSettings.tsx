@@ -1,7 +1,6 @@
 import {
   Image,
   TextCursorInput,
-  Trash2,
   User2,
   UserCircle2,
   WholeWord,
@@ -13,19 +12,15 @@ import {
   List,
   ListItem,
   Switch,
-  Tooltip,
 } from "../Components";
 import resizeImage from "../../utils/resize_image";
 import { useEffect, useRef, useState } from "react";
-import Button from "../Button";
-// import ReactSwitch from "react-switch";
-// import rgbToHex from "../../utils/rgb_to_hex";
+import ResetButton from "../custom/ResetButton";
 
 const ProfileSettings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showLastName, setShowLastName] = useState(true);
   const [showProfilePicture, setShowProfilePicture] = useState(true);
-  // const [studentName, setStudentName] = useState({ first: "", last: "" });
   const firstNameInput = useRef<HTMLInputElement | null>(null);
   const lastNameInput = useRef<HTMLInputElement | null>(null);
 
@@ -40,10 +35,6 @@ const ProfileSettings: React.FC = () => {
 
     chrome.storage.sync.get("account", (result) => {
       let account = result.account;
-      // setStudentName({
-      //   first: result.studentName.first,
-      //   last: result.studentName.last,
-      // });
 
       if (firstNameInput.current) {
         firstNameInput.current.value = account.studentName.first;
@@ -91,7 +82,7 @@ const ProfileSettings: React.FC = () => {
       let base64Image = reader.result as string | null;
 
       if (base64Image) {
-        base64Image = await resizeImage(base64Image, 48, 48);
+        base64Image = await resizeImage(base64Image, 192, 192);
         if (base64Image) {
           chrome.storage.sync.get(["account"], (result) => {
             // Get the current account data or initialize it if not present
@@ -100,16 +91,16 @@ const ProfileSettings: React.FC = () => {
                 first: "",
                 last: "",
               },
-              profilePicture: "",
             };
-
-            // Update the profilePicture field
-            account.profilePicture = base64Image;
 
             // Save the updated account object back to storage
             chrome.storage.sync.set({ account }, () => {
               console.log("Profile picture updated successfully!");
             });
+          });
+
+          chrome.storage.local.set({ profilePicture: base64Image }, () => {
+            console.log("Profile picture updated successfully!");
           });
 
           console.log("Image saved to Chrome Storage!", base64Image);
@@ -122,34 +113,44 @@ const ProfileSettings: React.FC = () => {
     console.log("Selected file:", file);
   };
 
+  const updateStudentName = () => {
+    chrome.storage.sync.get("account", (result) => {
+      let account = result.account;
+
+      if (firstNameInput.current?.value) {
+        account.studentName.first = firstNameInput.current.value;
+      }
+
+      if (lastNameInput.current?.value) {
+        account.studentName.last = lastNameInput.current.value;
+      }
+
+      chrome.storage.sync.set({
+        account: {
+          studentName: {
+            first: account.studentName.first,
+            last: account.studentName.last,
+          },
+        },
+      });
+    });
+  }
+
   return (
     <div className="flex flex-col p-2">
       <Heading
         title="Photo de profil"
         trailing={
-          <div
-            className="tab-label relative cursor-pointer select-none text-ellipsis rounded-lg px-2 py-1 font-semibold uppercase text-black/10 transition-colors delay-200 ease-out hover:bg-black/[0.05]"
+          <ResetButton
             onClick={() => {
-              chrome.storage.sync.get(
+              chrome.storage.local.get(
                 "originalProfilePicture",
                 ({ originalProfilePicture }) => {
-                  chrome.storage.sync.get("account", (result) => {
-                    let account = result.account;
-
-                    account.profilePicture = originalProfilePicture;
-
-                    chrome.storage.sync.set({ account });
-                  });
+                    chrome.storage.local.set({ profilePicture: originalProfilePicture });
                 },
               );
             }}
-          >
-            <Trash2 size={20} />
-            <Tooltip
-              tooltip="Réinitialiser"
-              className="!-right-1 !left-auto !translate-x-0"
-            />
-          </div>
+          />
         }
       />
       <div onPaste={handlePaste}>
@@ -168,14 +169,13 @@ const ProfileSettings: React.FC = () => {
       <List>
         <ListItem index={0} icon={User2}>
           <div className="flex flex-col py-1">
-            <div className="text-semiboldtext-xs text-black/30">
-              Prénom
-            </div>
+            <div className="text-semiboldtext-xs text-black/30">Prénom</div>
             <Input
               type="text"
-              placeholder="..."
+              placeholder="Tom"
               name=""
               id=""
+              onValidate={updateStudentName}
               ref={firstNameInput}
             />
           </div>
@@ -185,39 +185,15 @@ const ProfileSettings: React.FC = () => {
             <div className="text-semibold text-xs text-black/30">Nom</div>
             <Input
               type="text"
-              placeholder="..."
+              placeholder="Nook"
               name=""
               id=""
+              onValidate={updateStudentName}
               ref={lastNameInput}
             />
           </div>
         </ListItem>
       </List>
-
-      <Button
-      className="!mx-0 mt-3"
-        onClick={() => {
-          chrome.storage.sync.get("account", (result) => {
-            let account = result.account;
-
-            if (firstNameInput.current?.value) {
-              account.studentName.first = firstNameInput.current.value;
-            }
-
-            if (lastNameInput.current?.value) {
-              account.studentName.last = lastNameInput.current.value;
-            }
-
-            chrome.storage.sync.set({ account: {
-              studentName: {
-                first: account.studentName.first,
-                last: account.studentName.last
-              },
-              profilePicture: account.profilePicture
-            } });
-          });
-        }}
-      >Valider</Button>
 
       <Heading title="Affichage" />
       <List>

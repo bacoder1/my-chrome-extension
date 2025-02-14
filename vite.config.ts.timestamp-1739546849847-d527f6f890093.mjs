@@ -1,0 +1,43 @@
+// vite.config.ts
+import { defineConfig } from "file:///C:/Users/LENOVO%20LEGION/Desktop/my-chrome-extension/node_modules/vite/dist/node/index.js";
+import react from "file:///C:/Users/LENOVO%20LEGION/Desktop/my-chrome-extension/node_modules/@vitejs/plugin-react/dist/index.mjs";
+import { crx } from "file:///C:/Users/LENOVO%20LEGION/Desktop/my-chrome-extension/node_modules/@crxjs/vite-plugin/dist/index.mjs";
+
+// manifest.json
+var manifest_default = {
+  manifest_version: 3,
+  name: "Colibri",
+  version: "1.0.0",
+  description: "A Chrome extension built with Vite and React",
+  action: {
+    default_popup: "index.html",
+    default_icon: "logo.png"
+  },
+  content_scripts: [
+    {
+      js: ["src/scripts/content.tsx"],
+      matches: ["https://*.index-education.net/pronote/eleve.html"]
+    }
+  ],
+  web_accessible_resources: [
+    {
+      resources: ["fonts/fixel/*.ttf"],
+      matches: ["<all_urls>"],
+      use_dynamic_url: false
+    }
+  ],
+  permissions: [
+    "storage",
+    "unlimitedStorage"
+  ],
+  host_permissions: ["<all_urls>"]
+};
+
+// vite.config.ts
+var vite_config_default = defineConfig({
+  plugins: [react(), crx({ manifest: manifest_default })]
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiLCAibWFuaWZlc3QuanNvbiJdLAogICJzb3VyY2VzQ29udGVudCI6IFsiY29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2Rpcm5hbWUgPSBcIkM6XFxcXFVzZXJzXFxcXExFTk9WTyBMRUdJT05cXFxcRGVza3RvcFxcXFxteS1jaHJvbWUtZXh0ZW5zaW9uXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ZpbGVuYW1lID0gXCJDOlxcXFxVc2Vyc1xcXFxMRU5PVk8gTEVHSU9OXFxcXERlc2t0b3BcXFxcbXktY2hyb21lLWV4dGVuc2lvblxcXFx2aXRlLmNvbmZpZy50c1wiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9pbXBvcnRfbWV0YV91cmwgPSBcImZpbGU6Ly8vQzovVXNlcnMvTEVOT1ZPJTIwTEVHSU9OL0Rlc2t0b3AvbXktY2hyb21lLWV4dGVuc2lvbi92aXRlLmNvbmZpZy50c1wiO2ltcG9ydCB7IGRlZmluZUNvbmZpZyB9IGZyb20gXCJ2aXRlXCI7XG5pbXBvcnQgcmVhY3QgZnJvbSBcIkB2aXRlanMvcGx1Z2luLXJlYWN0XCI7XG5pbXBvcnQgeyBjcnggfSBmcm9tIFwiQGNyeGpzL3ZpdGUtcGx1Z2luXCI7XG5pbXBvcnQgbWFuaWZlc3QgZnJvbSBcIi4vbWFuaWZlc3QuanNvblwiO1xuXG5leHBvcnQgZGVmYXVsdCBkZWZpbmVDb25maWcoe1xuXHRwbHVnaW5zOiBbcmVhY3QoKSwgY3J4KHsgbWFuaWZlc3QgfSldLFxufSk7XG4iLCAie1xyXG4gIFwibWFuaWZlc3RfdmVyc2lvblwiOiAzLFxyXG4gIFwibmFtZVwiOiBcIkNvbGlicmlcIixcclxuICBcInZlcnNpb25cIjogXCIxLjAuMFwiLFxyXG5cdFwiZGVzY3JpcHRpb25cIjogXCJBIENocm9tZSBleHRlbnNpb24gYnVpbHQgd2l0aCBWaXRlIGFuZCBSZWFjdFwiLFxyXG5cdFwiYWN0aW9uXCI6IHtcclxuXHRcdFwiZGVmYXVsdF9wb3B1cFwiOiBcImluZGV4Lmh0bWxcIixcclxuXHRcdFwiZGVmYXVsdF9pY29uXCI6IFwibG9nby5wbmdcIlxyXG5cdH0sXHJcblx0XCJjb250ZW50X3NjcmlwdHNcIjogW1xyXG5cdFx0e1xyXG5cdFx0XHRcImpzXCI6IFtcInNyYy9zY3JpcHRzL2NvbnRlbnQudHN4XCJdLFxyXG5cdFx0XHRcIm1hdGNoZXNcIjogW1wiaHR0cHM6Ly8qLmluZGV4LWVkdWNhdGlvbi5uZXQvcHJvbm90ZS9lbGV2ZS5odG1sXCJdXHJcblx0XHR9XHJcblx0XSxcclxuXHRcIndlYl9hY2Nlc3NpYmxlX3Jlc291cmNlc1wiOiBbXHJcblx0XHR7XHJcblx0XHRcdFwicmVzb3VyY2VzXCI6IFtcImZvbnRzL2ZpeGVsLyoudHRmXCJdLFxyXG5cdFx0XHRcIm1hdGNoZXNcIjogW1wiPGFsbF91cmxzPlwiXSxcclxuXHRcdFx0XCJ1c2VfZHluYW1pY191cmxcIjogZmFsc2VcclxuXHRcdH1cclxuXHRdLFxyXG4gIFwicGVybWlzc2lvbnNcIjogW1xyXG5cdFx0XCJzdG9yYWdlXCIsXHJcbiAgICBcInVubGltaXRlZFN0b3JhZ2VcIlxyXG4gIF0sXHJcbiAgXCJob3N0X3Blcm1pc3Npb25zXCI6IFtcIjxhbGxfdXJscz5cIl1cclxufVxyXG4iXSwKICAibWFwcGluZ3MiOiAiO0FBQW9WLFNBQVMsb0JBQW9CO0FBQ2pYLE9BQU8sV0FBVztBQUNsQixTQUFTLFdBQVc7OztBQ0ZwQjtBQUFBLEVBQ0Usa0JBQW9CO0FBQUEsRUFDcEIsTUFBUTtBQUFBLEVBQ1IsU0FBVztBQUFBLEVBQ1osYUFBZTtBQUFBLEVBQ2YsUUFBVTtBQUFBLElBQ1QsZUFBaUI7QUFBQSxJQUNqQixjQUFnQjtBQUFBLEVBQ2pCO0FBQUEsRUFDQSxpQkFBbUI7QUFBQSxJQUNsQjtBQUFBLE1BQ0MsSUFBTSxDQUFDLHlCQUF5QjtBQUFBLE1BQ2hDLFNBQVcsQ0FBQyxrREFBa0Q7QUFBQSxJQUMvRDtBQUFBLEVBQ0Q7QUFBQSxFQUNBLDBCQUE0QjtBQUFBLElBQzNCO0FBQUEsTUFDQyxXQUFhLENBQUMsbUJBQW1CO0FBQUEsTUFDakMsU0FBVyxDQUFDLFlBQVk7QUFBQSxNQUN4QixpQkFBbUI7QUFBQSxJQUNwQjtBQUFBLEVBQ0Q7QUFBQSxFQUNDLGFBQWU7QUFBQSxJQUNmO0FBQUEsSUFDRTtBQUFBLEVBQ0Y7QUFBQSxFQUNBLGtCQUFvQixDQUFDLFlBQVk7QUFDbkM7OztBRHRCQSxJQUFPLHNCQUFRLGFBQWE7QUFBQSxFQUMzQixTQUFTLENBQUMsTUFBTSxHQUFHLElBQUksRUFBRSwyQkFBUyxDQUFDLENBQUM7QUFDckMsQ0FBQzsiLAogICJuYW1lcyI6IFtdCn0K

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "My Chrome Extension",
+  "name": "Colibri",
   "version": "1.0.0",
   "description": "A Chrome extension built with Vite and React",
   "action": {
@@ -10,13 +10,13 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.tsx-loader-D5iU8IhI.js"
+        "assets/content.tsx-loader-CZ42ffWH.js"
       ],
       "matches": [
         "https://*.index-education.net/pronote/eleve.html"
       ],
       "css": [
-        "assets/content-7YDP4q22.css"
+        "assets/content-BdGHKUhp.css"
       ]
     }
   ],
@@ -35,13 +35,17 @@
         "https://*.index-education.net/*"
       ],
       "resources": [
-        "assets/icons-BAtk9n0V.js",
-        "assets/content.tsx-Cyc5LLkj.js"
+        "assets/resize_image-CJE78n43.js",
+        "assets/content.tsx-CZBfvPao.js"
       ],
       "use_dynamic_url": false
     }
   ],
   "permissions": [
-    "storage"
+    "storage",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ]
 }

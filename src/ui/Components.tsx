@@ -1,4 +1,4 @@
-import { Check, ChevronRight, LucideIcon } from "lucide-react";
+import { Calendar, Check, ChevronRight, LucideIcon } from "lucide-react";
 import React, {
   ChangeEvent,
   forwardRef,
@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { ColorListItemProps, useAppState } from "../context/StateContext";
 import { AnimatePresence, motion } from "motion/react";
-import Spinner from "./Spinner";
 
 interface ListProps {
   style?: React.CSSProperties;
@@ -25,12 +24,8 @@ export const List: React.FC<ListProps> = ({
 }: ListProps) => {
   return (
     <div
-      className={`flex w-full select-none flex-col overflow-hidden rounded-xl ${className}`}
-      style={{
-        border: "1px solid rgba(0, 0, 0, 0.15)",
-        boxShadow: "0 1.5px 6px 0 rgba(0, 0, 0, 0.05)",
-        ...style,
-      }}
+      className={`card flex w-full select-none flex-col overflow-hidden ${className}`}
+      style={style}
       onClick={onClick}
     >
       {children}
@@ -38,20 +33,18 @@ export const List: React.FC<ListProps> = ({
   );
 };
 
-interface ListItemProps {
+interface ListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   subtitle?: string;
-  style?: React.CSSProperties;
-  className?: string;
   icon: LucideIcon | string;
   color?: string;
   checkbox?: React.ReactNode;
-  onClick?: () => void;
   index: number;
   iconSize?: number;
+  iconType?: "text";
   chevron?: boolean;
   trailing?: React.ReactNode;
-  children?: React.ReactNode;
+  leading?: React.ReactNode;
 }
 
 export const ListItem: React.FC<ListItemProps> = ({
@@ -66,24 +59,31 @@ export const ListItem: React.FC<ListItemProps> = ({
   onClick,
   index,
   chevron = true,
+  leading,
   trailing,
   children,
+  iconType,
 }: ListItemProps) => {
   return (
     <div
-      className={`${className} flex items-center`}
+      className={`${className} flex items-center ${onClick && chevron && "cursor-pointer"}`}
       style={{
         borderTop: index !== 0 ? "1px solid rgba(0, 0, 0, 0.15)" : "",
         ...style,
       }}
       onClick={onClick}
     >
+      {leading && leading}
       {typeof Icon === "string" ? (
         <div
           style={{ backgroundColor: color }}
           className="m-2 mr-3 flex size-7 items-center justify-center rounded-lg"
         >
-          <img src={Icon} height={iconSize} width={iconSize} />
+          {iconType === "text" ? (
+            <div style={{ fontSize: iconSize }}>{Icon}</div>
+          ) : (
+            <img src={Icon} height={iconSize} width={iconSize} />
+          )}
         </div>
       ) : (
         <div
@@ -96,12 +96,13 @@ export const ListItem: React.FC<ListItemProps> = ({
       {children ? (
         children
       ) : (
-        <p className="h-full flex-grow text-sm font-semibold">
+        <p className="h-full flex-grow text-start text-sm font-semibold">
           {title}
           {subtitle && (
             <>
-              <br />
-              <span>{subtitle}</span>
+              <span className="block text-xs font-medium text-black/60">
+                {subtitle}
+              </span>
             </>
           )}
         </p>
@@ -125,8 +126,10 @@ export const Heading: React.FC<HeadingProps> = ({
   trailing,
 }: HeadingProps) => {
   return (
-    <div className="mx-2 mb-[0.625rem] mt-6 flex select-none items-center justify-between text-sm font-semibold uppercase">
-      <span className="text-black/45 opacity-40">{title}</span>
+    <div className="mx-2 mb-[0.625rem] mt-6 flex select-none items-center justify-between text-sm">
+      <span className="font-semibold uppercase text-black/45 opacity-40">
+        {title}
+      </span>
       {trailing && trailing}
     </div>
   );
@@ -221,6 +224,25 @@ export const ModalButton: React.FC<ModalButtonProps> = ({
 					{typeof Modal === "function" ? Modal() : Modal}
 				</motion.div>
 			)} */}
+    </div>
+  );
+};
+
+interface DateInputProps {
+  className?: string;
+  style?: React.CSSProperties;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const DateInput: React.FC<DateInputProps> = ({className, style, onChange}: DateInputProps) => {
+  return (
+    <div
+      className={`${className} relative flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg  text-[#656565] transition-colors ease-in-out hover:bg-[#e9e5e5]`}
+      style={style}
+    >
+      <Calendar size={20} />
+      <p className="font-semibold">Ajouter une date</p>
+      <input type="date" className="absolute size-full inset-0 cursor-pointer z-10" onChange={(event) => onChange && onChange(event)} />
     </div>
   );
 };
@@ -418,34 +440,41 @@ export const Tooltip: React.FC<TooltipProps> = ({
   tooltip,
 }: TooltipProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [hovering, setHovering] = useState<boolean>(false);
+  const [visible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
     if (ref.current) {
       const parent = ref.current.parentElement;
 
       if (parent) {
-        const handleMouseOver = () => setHovering(true);
-        const handleMouseOut = () => setHovering(false);
+        let timeout: any;
 
-        parent.addEventListener("mouseover", handleMouseOver);
-        parent.addEventListener("mouseout", handleMouseOut);
+        const handleMouseEnter = () => {
+          timeout = setTimeout(() => setIsVisible(true), 500); // Delay before appearing
+        };
+
+        const handleMouseLeave = () => {
+          clearTimeout(timeout); // Cancel delay if mouse leaves early
+          setIsVisible(false); // Hide immediately
+        };
+
+        parent.addEventListener("mouseenter", handleMouseEnter);
+        parent.addEventListener("mouseleave", handleMouseLeave);
 
         return () => {
-          parent.removeEventListener("mouseover", handleMouseOver);
-          parent.removeEventListener("mouseout", handleMouseOut);
+          clearTimeout(timeout);
+          parent.removeEventListener("mouseover", handleMouseEnter);
+          parent.removeEventListener("mouseleave", handleMouseLeave);
         };
       }
     }
-  }, [ref]);
+  }, []);
 
   return (
     <div
       className={`${className} ${
-        hovering
-          ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-          : "pointer-events-none translate-y-2 scale-90 opacity-0"
-      } absolute -top-[calc(100%+0.25rem)] left-1/2 -translate-x-1/2 select-none rounded-md bg-black/80 px-2 py-1 text-xs text-white transition delay-500 duration-[200] ease-in-out`}
+        visible ? "opacity-100" : "opacity-0"
+      } pointer-events-none absolute -left-1 top-1/2 -translate-x-full -translate-y-1/2 select-none rounded-md bg-black/80 px-2 py-1 text-xs font-medium text-white`}
       ref={ref}
       style={{
         boxShadow: "0 1.5px 6px 0 rgba(0, 0, 0, 0.05)",
@@ -562,19 +591,24 @@ export const Switch: React.FC<SwitchProps> = ({
   );
 };
 
-interface InputProps {
+interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
   type: string;
   name?: string;
   id?: string;
   placeholder?: string;
-  className?: string;
-  style?: React.CSSProperties;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onValidate?: () => void;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { placeholder = "", type = "text", style, className = "", onChange },
+    {
+      placeholder = "",
+      type = "text",
+      style,
+      className = "",
+      onChange,
+      onValidate,
+    },
     ref,
   ) => {
     const { themeColor } = useAppState();
@@ -585,9 +619,109 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         type={type}
         placeholder={placeholder}
         className={`font-semibold ${className}`}
-        onChange={(event) => onChange && onChange(event)}
-        style={{ "--accent-color": `rgba(${themeColor.rgb.lighter}, 1)`, ...style } as React.CSSProperties}
+        onChange={onChange}
+        onBlur={onValidate}
+        onKeyDown={(event) =>
+          event.key === "Enter" && onValidate && onValidate()
+        }
+        style={
+          {
+            "--accent-color": `rgba(${themeColor.rgb.lighter}, 1)`,
+            ...style,
+          } as React.CSSProperties
+        }
       />
     );
   },
 );
+
+interface SpinnerProps {
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+  style?: React.CSSProperties;
+  className?: string;
+}
+
+export const Spinner: React.FC<SpinnerProps> = ({
+  size = 20,
+  color,
+  strokeWidth = 4,
+  style,
+  className = "",
+}) => {
+  const { themeColor } = useAppState();
+  if (!color) color = `rgba(${themeColor.rgb.primary}, 1)`;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        style={{
+          ...style,
+        }}
+        initial={{ scale: 0, opacity: 0 }}
+        exit={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1, rotate: [0, 360] }}
+        className={`inline-flex justify-center items-center${className}`}
+        transition={{
+          repeat: Infinity,
+          duration: 0.7,
+          ease: "linear",
+        }}
+      >
+        <svg width={size} height={size}>
+          <g transform={`rotate(-90, ${size / 2}, ${size / 2})`}>
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              stroke={color}
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${circumference * 0.75} ${
+                circumference * 0.25
+              }`}
+              strokeLinecap="round"
+              fill="none"
+            />
+          </g>
+        </svg>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+interface ButtonProps {
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
+  accentColor?: string;
+}
+
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  style,
+  disabled = false,
+  onClick,
+  className = "",
+  accentColor,
+}: ButtonProps) => {
+  const { themeColor } = useAppState();
+  if (!accentColor) accentColor = `rgba(${themeColor.rgb.primary}, 1)`;
+
+  return (
+    <motion.button
+      className={`m-2 h-10 rounded-lg text-center text-base font-semibold uppercase tracking-wider text-white transition-colors ${className}`}
+      onClick={onClick}
+      style={{ backgroundColor: accentColor, ...style }}
+      disabled={disabled}
+      whileHover={{ opacity: 0.25 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {children}
+    </motion.button>
+  );
+};

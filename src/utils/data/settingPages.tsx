@@ -1,9 +1,19 @@
-import { Palette, Sparkles, User } from "lucide-react";
-import { settingsPage } from "../../types/types";
-import ColorSelector from "../../ui/settings/ColorSelector";
-// import WidgetsConfig from "../../ui/settings/WidgetsConfig";
-import IconSelector from "../../ui/settings/IconSelector";
+import { LucideIcon, Palette, Sparkles, SwatchBook, User } from "lucide-react";
+import ColorSelector from "../../ui/settings/ColorSettings";
+// import WidgetsSettings from "../../ui/settings/WidgetsSettings";
+import IconSettings from "../../ui/settings/IconSettings";
 import ProfileSettings from "../../ui/settings/ProfileSettings";
+import SubjectsSettings from "../../ui/settings/SubjectsSettings";
+import ResetButton from "../../ui/custom/ResetButton";
+
+export interface settingsPage {
+  name: string;
+  color: string;
+  category: string;
+  icon: LucideIcon;
+  page: React.FC<{}>;
+  headerTrailing?: React.ReactElement;
+}
 
 const settingsPages: settingsPage[] = [
   {
@@ -25,14 +35,28 @@ const settingsPages: settingsPage[] = [
     color: "goldenrod",
     category: "Personnalisation",
     icon: Sparkles,
-    page: IconSelector,
+    page: IconSettings,
+  },
+  {
+    name: "Matières",
+    color: "forestgreen",
+    category: "Personnalisation",
+    icon: SwatchBook,
+    page: SubjectsSettings,
+    headerTrailing: (
+      <ResetButton
+        onClick={() => {
+          chrome.storage.sync.set({ subjectData: {} });
+        }}
+      />
+    ),
   },
   // {
   // 	name: "Widgets",
   // 	color: "darkslateblue",
   // 	category: "Avancé",
   //   icon: LayoutTemplate,
-  // 	page: WidgetsConfig,
+  // 	page: WidgetsSettings,
   // },
 ];
 

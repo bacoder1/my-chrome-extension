@@ -1,12 +1,20 @@
 [
-	{
-		"name": "Par défaut",
-		"shortcodes": ["pronote", "défaut"],
-		"url": "https://3310001c.index-education.net/pronote/images/favicon-32x32.png"
-	},
-	{
-		"name": "Papillon",
-		"shortcodes": ["papillon", "mobile"],
-		"url": "https://play-lh.googleusercontent.com/BxMOh_OAnb6d6RaoYf58qKdndyUoNtWQ9azzXeHWumordnvxSspm8FN--7w5Swbm7Rt7"
-	}
+  {
+    "id": "icons",
+    "name": "Îcones",
+    "emojis": [
+			{
+				"id": "default",
+				"name": "Par défaut",
+				"keywords": ["pronote", "défaut"],
+				"skins": [{"src": "https://3310001c.index-education.net/pronote/images/favicon-32x32.png"}]
+			},
+			{
+				"id": "papillon",
+				"name": "Papillon",
+				"keywords": ["papillon", "mobile"],
+				"skins": [{"src": "https://play-lh.googleusercontent.com/BxMOh_OAnb6d6RaoYf58qKdndyUoNtWQ9azzXeHWumordnvxSspm8FN--7w5Swbm7Rt7"}]
+			}
+    ]
+  }
 ]

@@ -20,6 +20,7 @@ import colorList from "../utils/data/colors.json";
 import icons from "../../public/data/icons.json";
 import parseName from "../utils/format/parse_name";
 import imageUrlToDataUrl from "../utils/image_url_to_data";
+import subjectSelectors from "../utils/data/subject_selectors.json";
 
 chrome.storage.sync.get("accentColor", (result) => {
   let accentColor = result.accentColor;
@@ -38,16 +39,8 @@ chrome.storage.sync.get("accentColor", (result) => {
 });
 
 chrome.storage.onChanged.addListener((changes, _namespace) => {
+  console.log(changes, _namespace);
   if (changes.account) {
-    console.log(changes.account.newValue);
-    const picture: HTMLImageElement | null = document.querySelector(
-      ".ObjetBandeauEspace .ibe_util_photo img",
-    );
-
-    if (picture && changes.account.newValue.profilePicture) {
-      picture.src = changes.account.newValue.profilePicture;
-    }
-
     if (changes.account.newValue.studentName) {
       chrome.storage.sync.get("showLastName", (result) => {
         changeStudentName(
@@ -56,6 +49,105 @@ chrome.storage.onChanged.addListener((changes, _namespace) => {
         );
       });
     }
+  }
+
+  if (changes.profilePicture) {
+    const picture: HTMLImageElement | null = document.querySelector(
+      ".ObjetBandeauEspace .ibe_util_photo img",
+    );
+
+    if (picture && changes.profilePicture.newValue) {
+      picture.src = changes.profilePicture.newValue;
+    }
+  }
+
+  if (changes.siteIconSrc) {
+    console.log("hi");
+    const link: HTMLLinkElement | null =
+      document.querySelector("link[rel='icon']");
+
+    if (link) {
+      link.href = changes.siteIconSrc.newValue;
+    }
+  }
+
+  if (changes.showLastName) {
+    chrome.storage.sync.get("account", (result) => {
+      const account = result.account;
+      console.log(account);
+      changeStudentName(
+        account.studentName.first,
+        changes.showLastName.newValue && account.studentName.last,
+      );
+    });
+  }
+
+  if (changes.showProfilePicture) {
+    updateProfilePicture(changes.showProfilePicture.newValue);
+  }
+
+  if (changes.accentColor) {
+    chrome.storage.sync.get("accentColor", (result) => {
+      const accentColor = result.accentColor;
+
+      for (let key in accentColor.rgb) {
+        const value = accentColor.rgb[key];
+        document.body.style.setProperty(`--accent-color-${key}`, value);
+      }
+    });
+  }
+
+  if (changes.subjectData) {
+    chrome.storage.sync.get("subjectData", (result) => {
+      let subjectData = result.subjectData;
+
+      subjectSelectors.forEach((selector) => {
+        const elements = document.querySelectorAll(selector.selector);
+
+        elements.forEach((element) => {
+          const originalSubjectName = element.getAttribute(
+            "originalSubjectName",
+          );
+
+          if (originalSubjectName) {
+            const item = subjectData[originalSubjectName];
+
+            (element as HTMLElement).innerText = `${item.emoji} ${item.pretty}`;
+
+            if (selector.hasColor) {
+              if (selector.id === "devoirs") {
+                element.parentElement!.style.removeProperty(
+                  "--couleur-matiere",
+                );
+                element.parentElement!.parentElement!.parentElement!.parentElement!.style.setProperty(
+                  "--couleur-matiere",
+                  item.color,
+                );
+              } else if (selector.id === "edt") {
+                (
+                  element.parentElement!.parentElement!.querySelector(
+                    ".trait-matiere",
+                  ) as HTMLElement
+                ).style.backgroundColor = item.color;
+              } else if (selector.id === "ressources") {
+                (element as HTMLElement).style.setProperty(
+                  "--color-line",
+                  item.color,
+                );
+              }
+            }
+          }
+        });
+      });
+    });
+  }
+
+  if (changes.customHomework) {
+    chrome.storage.sync.get("customHomework", (result) => {
+      let customHomework = result.customHomework;
+
+      renderCustomHomework(customHomework, true, changes.customHomework.oldValue);
+    });
   }
 });
 
@@ -68,53 +160,13 @@ function changeStudentName(firstName: any, lastName: any) {
     let name = `${firstName ? firstName : ""} ${lastName ? lastName : ""}`;
 
     name = name.trim();
-    chrome.storage.onChanged.addListener((changes, _namespace) => {
-      if (changes.showLastName) {
-        chrome.storage.sync.get("account", (result) => {
-          const account = result.account;
-          console.log(account);
-          changeStudentName(
-            account.studentName.first,
-            changes.showLastName.newValue && account.studentName.last,
-          );
-        });
-      }
-    });
 
-    nameWrapper.innerText = name;
+    const text =
+      name + nameWrapper.innerHTML.slice(nameWrapper.innerHTML.indexOf("<"));
+
+    nameWrapper.innerHTML = text;
   }
 }
-
-chrome.storage.onChanged.addListener((changes, _namespace) => {
-  if (changes.siteIconSrc) {
-    console.log("hi");
-    const link: HTMLLinkElement | null =
-      document.querySelector("link[rel='icon']");
-
-    if (link) {
-      link.href = changes.siteIconSrc.newValue;
-    }
-  }
-});
-
-chrome.storage.onChanged.addListener((changes, _namespace) => {
-  if (changes.showLastName) {
-    chrome.storage.sync.get("account", (result) => {
-      const account = result.account;
-      console.log(account);
-      changeStudentName(
-        account.studentName.first,
-        changes.showLastName.newValue && account.studentName.last,
-      );
-    });
-  }
-});
-
-chrome.storage.onChanged.addListener((changes, _namespace) => {
-  if (changes.showProfilePicture) {
-    updateProfilePicture(changes.showProfilePicture.newValue);
-  }
-});
 
 function updateProfilePicture(showing: boolean) {
   const picture: HTMLImageElement | null = document.querySelector(
@@ -130,11 +182,11 @@ function updateProfilePicture(showing: boolean) {
   }
 }
 
-chrome.storage.sync.get("siteIconSrc", (result) => {
+chrome.storage.local.get("siteIconSrc", (result) => {
   let siteIconSrc = result.siteIconSrc;
 
   if (!siteIconSrc) {
-    chrome.storage.sync.set({ siteIconSrc: icons[0].url });
+    chrome.storage.local.set({ siteIconSrc: icons[0].emojis[0].skins[0].src });
   } else {
     document.querySelectorAll("link[rel='icon']").forEach((el) => el.remove());
 
@@ -216,6 +268,10 @@ function handlePageScripts() {
 }
 
 injectCustomFont();
+
+const lucideScript = document.createElement("script");
+lucideScript.src = "https://unpkg.com/lucide@latest";
+document.body.appendChild(lucideScript);
 
 // Function to wait for the wrapper element
 function check(): void {
@@ -337,8 +393,8 @@ function run() {
     },
   );
 
-  chrome.storage.sync.get("account", (result) => {
-    let account = result.account;
+  chrome.storage.local.get("profilePicture", (result) => {
+    let profilePicture = result.profilePicture;
 
     const picture: HTMLImageElement | null = document.querySelector(
       ".ObjetBandeauEspace .ibe_util_photo img",
@@ -346,11 +402,17 @@ function run() {
 
     if (picture) {
       imageUrlToDataUrl(picture.src).then((dataUrl) => {
-        chrome.storage.sync.set({
+        chrome.storage.local.set({
           originalProfilePicture: dataUrl,
         });
       });
     }
+
+    if (picture && profilePicture) picture.src = profilePicture;
+  });
+
+  chrome.storage.sync.get("account", (result) => {
+    let account = result.account;
 
     if (
       !account ||
@@ -363,13 +425,8 @@ function run() {
             first: getStudentName().firstName,
             last: getStudentName().lastName,
           },
-          profilePicture: picture?.src,
         },
       });
-    } else {
-      if (picture && account.profilePicture) {
-        picture.src = account.profilePicture;
-      }
     }
   });
 
@@ -406,5 +463,131 @@ function run() {
 }
 
 check();
+
+export function renderCustomHomework(customHomework: any, update = false, oldValue?: any) {
+  if (!update && document.querySelector("ul.liste-imbriquee .colibri-hw")) return;
+
+  const filteredHomework = oldValue
+    ? customHomework.filter((hw: any) => {
+        // Check if the homework item exists in oldValue
+        return !oldValue.some(
+          (oldHw: any) =>
+            oldHw.subject === hw.subject &&
+            oldHw.description === hw.description &&
+            oldHw.date === hw.date,
+        );
+      })
+    : customHomework;
+
+  // Group filtered homework by date
+  const homeworkByDate: { [key: string]: any[] } = {};
+
+  filteredHomework.forEach((hw: any) => {
+    const dateKey = hw.date; // Assuming hw.date is in the format "yyyy-mm-dd"
+    if (!homeworkByDate[dateKey]) {
+      homeworkByDate[dateKey] = [];
+    }
+    homeworkByDate[dateKey].push(hw);
+  });
+
+  // Find the existing homework list container
+  const homeworkList = document.querySelector("ul.liste-imbriquee");
+
+  if (!homeworkList) {
+    console.error("Homework list container not found!");
+    return;
+  }
+
+  // Generate HTML for each date group and append it to the existing list
+  for (const date in homeworkByDate) {
+    // Check if a section for this date already exists
+    let dateSection = homeworkList.querySelector(
+      `h3[id="id_173_date_${date.replace(/-/g, "_")}"]`,
+    );
+
+    if (!dateSection) {
+      // Create a new date section if it doesn't exist
+      const dateHeading = document.createElement("li");
+      dateHeading.setAttribute(
+        "aria-labelledby",
+        `id_173_date_${date.replace(/-/g, "_")}`,
+      );
+      dateHeading.setAttribute("tabindex", "0");
+
+      // Format the date heading
+      const dateObj = new Date(date);
+      const formattedDate = dateObj.toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      });
+
+      const heading = document.createElement("h3");
+      heading.id = `id_173_date_${date.replace(/-/g, "_")}`;
+      heading.innerHTML = `<span>Pour</span> ${formattedDate}`;
+      dateHeading.appendChild(heading);
+
+      const subList = document.createElement("ul");
+      subList.className = "sub-liste cols";
+      dateHeading.appendChild(subList);
+
+      homeworkList.appendChild(dateHeading);
+      dateSection = heading;
+    }
+
+    // Find the sub-list for this date
+    const subList = dateSection.parentElement?.querySelector("ul.sub-liste");
+
+    if (!subList) {
+      console.error("Sub-list not found for date:", date);
+      continue;
+    }
+
+    // Add homework items to the sub-list
+    homeworkByDate[date].forEach((hw) => {
+      const homeworkItem = document.createElement("li");
+      homeworkItem.setAttribute(
+        "aria-labelledby",
+        `id_173_date_${date.replace(/-/g, "_")}`,
+      );
+      homeworkItem.style.setProperty(
+        "--couleur-matiere",
+        hw.color || "#000000",
+      ); // Default color if none is provided
+
+      const homeworkHTML = `
+        <div class="wrap conteneur-item colibri-hw">
+          <div tabindex="0" role="link" class="as-header">
+            <div class="with-color" style="margin-left: 0.8rem;">
+              <span class="titre-matiere ${hw.done ? "est-fait" : ""}" originalsubjectname="${hw.subject}">
+                ${hw.subject}
+              </span>
+            </div>
+            <div tabindex="0" class="tag-style ThemeCat-pedagogie ie-chips">
+              <div class="text ie-ellipsis">${hw.done ? "Fait" : "Non Fait"}</div>
+            </div>
+          </div>
+          <div class="m-left">
+            <div tabindex="0" class="as-content ${hw.done ? "avecAction done" : "avecAction"}" aria-labelledby="IE.Identite.collection.g25_0">
+              <div class="description widgetTAF tiny-view ${hw.done ? "est-fait" : ""}">
+                <div>${hw.description}</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-contain conteneur-cb">
+            <label class="iecb iecbrbdroite cb-termine colored-label ${hw.done ? "is-checked" : ""}" for="cb-g7-gen-for">
+              <input type="checkbox" id="cb-g7-gen-for" ${hw.done ? "checked" : ""}>
+              <span aria-hidden="true"></span>
+              <span>J'ai terminé</span>
+            </label>
+          </div>
+        </div>
+      `;
+
+      homeworkItem.innerHTML = homeworkHTML;
+      subList.appendChild(homeworkItem);
+    });
+  }
+}
 
 console.log("hi");

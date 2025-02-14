@@ -25,10 +25,10 @@ export interface ColorListItemProps {
   id: string;
   name: string;
   rgb: {
-      primary: string;
-      darker: string;
-      lighter: string;
-      dark: string;
+    primary: string;
+    darker: string;
+    lighter: string;
+    dark: string;
   };
   description: string;
 }
@@ -38,14 +38,19 @@ interface StateProviderProps {
 }
 
 export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
-  const [themeColor, setThemeColor] = useState<ColorListItemProps>(colorList[0]);
+  const [themeColor, setThemeColor] = useState<ColorListItemProps>(
+    colorList[0],
+  );
 
   useEffect(() => {
     // Ensure default value in case chrome.storage.sync.get fails or is unset
-    chrome.storage.sync.get("accentColor", (result) => {
-      const storedColor = result.accentColor || colorList[0];
-      setThemeColor(storedColor);
-    });
+
+    if (typeof chrome.storage !== undefined && chrome.storage) {
+      chrome.storage.sync.get("accentColor", (result) => {
+        const storedColor = result.accentColor || colorList[0];
+        setThemeColor(storedColor);
+      });
+    }
   }, []);
 
   return (

@@ -5,6 +5,10 @@
   background-color: transparent !important;
 }
 
+.ObjetBandeauEspace {
+  background-color: transparent !important;
+}
+
 .objetbandeauentete_global
   .objetBandeauEntete_menu:not(.ongletLudique)
   .menu-container {
@@ -51,9 +55,9 @@
 }
 
 .item-selected .label-menu_niveau0 {
-  color: rgba(var(--accent-color-darker), 1) !important;
+  color: color-mix(in oklab, rgba(var(--accent-color-primary), 1) 100%, #000 75%) !important;
   font-weight: 600 !important;
-  border-color: rgba(var(--accent-color-darker), 1) !important;
+  border-color: color-mix(in oklab, rgba(var(--accent-color-primary), 1) 100%, #000 75%) !important;
 }
 
 .item-menu_niveau0 {
@@ -61,15 +65,14 @@
 }
 
 .ibe_util_photo.ibe_actif {
-  border-radius: 10px !important;
   border: none !important;
   overflow: hidden;
-	height: 4.5rem !important;
 	
   img {
+    border-radius: 9999px !important;
 		margin-right: 1rem !important;
-    height: 4.5rem !important;
-    width: 4.5rem !important;
+    height: 4rem !important;
+    width: 4rem !important;
   }
 }
 
@@ -84,6 +87,7 @@
 .ibe_gauche {
   position: static !important;
   padding: 0.5625rem 0;
+  height: calc(4.5rem + 0.5625rem * 2);
 }
 
 .ObjetBandeauEspace {
@@ -273,6 +277,5 @@ h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper {
   /* border-radius: 0 0 3rem 3rem !important; */
   box-shadow: 0 -1px 7.5px rgba(var(--black), 0.15) !important;
   overflow: hidden !important;
-  z-index: 9999 !important;
-  background-color: white;
+  background-color: rgba(var(--background), 1);
 }

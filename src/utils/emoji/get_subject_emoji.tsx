@@ -1,6 +1,5 @@
 export const subjectEmojis: Record<string, string> = {
 	numerique: "💻",
-	si: "💻",
 	snt: "💻",
 	travaux: "⚒",
 	travail: "💼",

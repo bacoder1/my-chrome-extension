@@ -1,5 +1,5 @@
 import getClosestColor from "./get_closest_color";
-import { subjectColors } from "./subject_colors";
+import subjectColors from "../data/subject_colors.json";
 
 export default function changeSubjectColor(color: string, element: any, parent: HTMLElement, opacity: number = 1) {
   console.log(typeof window.getComputedStyle(parent).getPropertyValue("--subject-color"))

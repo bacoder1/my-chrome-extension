@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import settingsPages from "../utils/data/settingPages";
-import { settingsPage } from "../types/types";
+import { settingsPage } from "../utils/data/settingPages";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
 import { Heading, List, ListItem } from "./Components";
@@ -18,20 +18,23 @@ const Settings: React.FC = () => {
 
 	const SettingHeader: React.FC<{ setting: settingsPage }> = ({ setting }) => (
 		<div
-			className="bg-white top-0 mb-6 w-screen flex items-center font-semibold px-6 py-3 gap-4"
+			className="bg-white top-0 mb-6 w-screen flex justify-between items-center font-semibold px-6 py-3"
 			style={{
 				borderBottom: "1px solid rgba(0, 0, 0, 0.15)",
 				boxShadow: "0 1.5px 6px 0 rgba(0, 0, 0, 0.05)",
 				color: "rgba(0, 0, 0, 0.8)",
 			}}>
-			<div className="p-1">
-				<ArrowLeft
-					size={20}
-					className="cursor-pointer"
-					onClick={() => setSelectedSetting(null)}
-				/>
+			<div className="flex gap-4 items-center">
+				<div className="p-1">
+					<ArrowLeft
+						size={20}
+						className="cursor-pointer"
+						onClick={() => setSelectedSetting(null)}
+					/>
+				</div>
+				<p className="text-base">{setting.name}</p>
 			</div>
-			<p>{setting.name}</p>
+			{setting.headerTrailing}
 		</div>
 	);
 
