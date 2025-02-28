@@ -24,5 +24,11 @@
   {
     "selector": ".widget.ds .infos-ds-conteneur > h3",
     "hasEmoji": false
+  },
+  {
+    "selector": ".ObjetGrilleCours .cours-simple td :nth-child(2)",
+    "hasColor": true,
+    "id": "vie-scolaire-edt",
+    "hasEmoji": false
   }
 ]

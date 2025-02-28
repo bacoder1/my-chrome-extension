@@ -2,27 +2,36 @@
   "manifest_version": 3,
   "name": "Colibri",
   "version": "1.0.0",
-	"description": "A Chrome extension built with Vite and React",
-	"action": {
-		"default_popup": "index.html",
-		"default_icon": "logo.png"
-	},
-	"content_scripts": [
-		{
-			"js": ["src/scripts/content.tsx"],
-			"matches": ["https://*.index-education.net/pronote/eleve.html"]
-		}
-	],
-	"web_accessible_resources": [
-		{
-			"resources": ["fonts/fixel/*.ttf"],
-			"matches": ["<all_urls>"],
-			"use_dynamic_url": false
-		}
-	],
+  "description": "A Chrome extension built with Vite and React",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "logo.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["src/scripts/content.tsx"],
+      "matches": ["https://*.index-education.net/pronote/eleve.html"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["fonts/fixel/*.ttf"],
+      "matches": ["<all_urls>"],
+      "use_dynamic_url": false
+    },
+    {
+      "resources": ["intercept.js"],
+      "matches": ["https://3310001c.index-education.net/*"]
+    }
+  ],
   "permissions": [
-		"storage",
-    "unlimitedStorage"
+    "debugger",
+    "storage",
+    "unlimitedStorage",
+    "webRequest"
   ],
   "host_permissions": ["<all_urls>"]
 }

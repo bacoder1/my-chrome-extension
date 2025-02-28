@@ -190,7 +190,7 @@ h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper {
   padding: 0.6rem 1.15rem !important;
   border-radius: 0.5rem !important;
   outline: 1px solid rgba(var(--black), 0.15);
-  color: rgba(var(--accent-color-dark), 0.4) !important;
+  color: rgba(var(--gray), 0.6) !important;
   font-weight: 500 !important;
   letter-spacing: -0.01em !important;
   font-size: var(--text-md) !important;
@@ -199,8 +199,8 @@ h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper {
   border: none !important;
 
   &.selected {
-    background-color: rgba(var(--accent-color-primary), 0.05);
-    color: rgba(var(--accent-color-dark), 1) !important;
+    background-color: rgba(var(--gray), 0.1);
+    color: rgba(var(--black), 1) !important;
     font-weight: 600 !important;
   }
 

@@ -1,10 +1,20 @@
-import { LucideIcon, Palette, Sparkles, SwatchBook, User } from "lucide-react";
+import {
+  ChartArea,
+  LucideIcon,
+  Minus,
+  Palette,
+  Sparkles,
+  SwatchBook,
+  User,
+} from "lucide-react";
 import ColorSelector from "../../ui/settings/ColorSettings";
 // import WidgetsSettings from "../../ui/settings/WidgetsSettings";
 import IconSettings from "../../ui/settings/IconSettings";
 import ProfileSettings from "../../ui/settings/ProfileSettings";
 import SubjectsSettings from "../../ui/settings/SubjectsSettings";
 import ResetButton from "../../ui/custom/ResetButton";
+import GradesSettings from "../../ui/settings/GradesSettings";
+import { Menu } from "../../ui/Components";
 
 export interface settingsPage {
   name: string;
@@ -47,6 +57,33 @@ const settingsPages: settingsPage[] = [
       <ResetButton
         onClick={() => {
           chrome.storage.sync.set({ subjectData: {} });
+        }}
+      />
+    ),
+  },
+  {
+    name: "Notes",
+    color: "peru",
+    category: "Avancé",
+    icon: ChartArea,
+    page: GradesSettings,
+    headerTrailing: (
+      <Menu
+        onSelect={(button) => {
+          console.log("button", button);
+          if (button.id === "single") {
+            chrome.storage.sync.set({ chartDualLineMode: false });
+          } else if (button.id === "double") {
+            chrome.storage.sync.set({ chartDualLineMode: true });
+          }
+        }}
+        buttons={[
+          { label: "Vue unique", id: "single", icon: Minus },
+          { label: "Vue multiple", id: "double", icon: Minus },
+        ]}
+        selectedId={async () => {
+          const result = await chrome.storage.sync.get("chartDualLineMode");
+          return result.chartDualLineMode ? "double" : "single";
         }}
       />
     ),

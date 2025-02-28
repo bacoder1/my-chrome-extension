@@ -1,16 +1,5 @@
 import "../styles/injected/globals.css";
 import formatSchoolName from "../utils/format/format_school_name";
-import {
-  createElement,
-  Home,
-  User,
-  LibraryBig,
-  ChartArea,
-  CirclePlus,
-  GraduationCap,
-  CalendarDays,
-  Megaphone,
-} from "lucide";
 import waitForElement from "../utils/dom/wait_for_element";
 import formatScheduleDateRange from "../utils/format/format_schedule_date_range";
 import injectCustomFont from "../utils/dom/inject_custom_font";
@@ -21,6 +10,30 @@ import icons from "../../public/data/icons.json";
 import parseName from "../utils/format/parse_name";
 import imageUrlToDataUrl from "../utils/image_url_to_data";
 import subjectSelectors from "../utils/data/subject_selectors.json";
+import grades from "./grades";
+import timetable from "./timetable";
+
+// Inject the interception script into the page
+const script = document.createElement("script");
+script.src = chrome.runtime.getURL("intercept.js");
+script.onload = function () {
+  (this as any).remove(); // Remove the <script> element
+};
+
+(document.head || document.documentElement).appendChild(script);
+
+// Listen for messages from the page context
+window.addEventListener("message", (event) => {
+  // Ensure the message is from our script
+  if (event.source === window && event.data?.type === "DernieresNotes") {
+    console.log("Received grades data from page context:", event.data.data);
+
+    chrome.runtime.sendMessage({
+      type: "DernieresNotes",
+      data: event.data.data,
+    });
+  }
+});
 
 chrome.storage.sync.get("accentColor", (result) => {
   let accentColor = result.accentColor;
@@ -134,6 +147,17 @@ chrome.storage.onChanged.addListener((changes, _namespace) => {
                   "--color-line",
                   item.color,
                 );
+              } else if (selector.id === "vie-scolaire-edt") {
+                (
+                  element.parentElement!.parentElement!.parentElement!
+                    .parentElement as HTMLElement
+                ).style.backgroundColor =
+                  `color-mix(in oklab, ${item.color} 45.5%, white 54.5%)`;
+                (
+                  element.parentElement!.parentElement!.parentElement!
+                    .parentElement as HTMLElement
+                ).style.borderColor =
+                  `color-mix(in oklab, ${item.color} 28.5%, black 71.5%)`;
               }
             }
           }
@@ -146,7 +170,11 @@ chrome.storage.onChanged.addListener((changes, _namespace) => {
     chrome.storage.sync.get("customHomework", (result) => {
       let customHomework = result.customHomework;
 
-      renderCustomHomework(customHomework, true, changes.customHomework.oldValue);
+      renderCustomHomework(
+        customHomework,
+        true,
+        changes.customHomework.oldValue,
+      );
     });
   }
 });
@@ -225,6 +253,14 @@ function handlePageScripts() {
     home: {
       elementSelector: ".dotty .widget header > h2 > span",
       script: home,
+    },
+    grades: {
+      elementSelector: ".ListeDernieresNotes .zone-centrale",
+      script: grades,
+    },
+    timetable: {
+      elementSelector: ".ObjetGrilleCours .cours-simple td :nth-child(2)",
+      script: timetable,
     },
   };
 
@@ -358,30 +394,6 @@ function run() {
     );
   }
 
-  const headerIcons: { [key: string]: any } = {
-    "Page d'acceuil": Home,
-    "Les informations liées à mon compte": User,
-    "Contenu et ressources pédagogiques": LibraryBig,
-    "Détail de mes notes": ChartArea,
-    "Détails de mes évaluations": CirclePlus,
-    "Livret scolaire": GraduationCap,
-    "Mon emploi du temps": CalendarDays,
-    "Informations & sondages": Megaphone,
-  };
-
-  document
-    .querySelectorAll(".objetBandeauEntete_thirdmenu h1")
-    .forEach((el) => {
-      console.log("hi");
-      const textContent = el?.textContent?.trim();
-      if (textContent) {
-        el.insertAdjacentElement(
-          "afterbegin",
-          createElement(headerIcons[textContent]),
-        );
-      }
-    });
-
   waitForElement(
     'h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper',
     (el: Element) => {
@@ -464,8 +476,13 @@ function run() {
 
 check();
 
-export function renderCustomHomework(customHomework: any, update = false, oldValue?: any) {
-  if (!update && document.querySelector("ul.liste-imbriquee .colibri-hw")) return;
+export function renderCustomHomework(
+  customHomework: any,
+  update = false,
+  oldValue?: any,
+) {
+  if (!update && document.querySelector("ul.liste-imbriquee .colibri-hw"))
+    return;
 
   const filteredHomework = oldValue
     ? customHomework.filter((hw: any) => {

@@ -89,24 +89,6 @@
     font-weight: 600 !important;
   }
 
-  .tag-style {
-    display: none !important;
-    /* padding: 0.5rem 0.85rem !important;
-    background: rgba(var(--black), 0.05) !important;
-    color: rgba(var(--black), 0.45) !important;
-    border-radius: 0.5rem !important;
-    font-weight: 600 !important;
-
-    &::after {
-      display: none !important;
-    }
-
-    &.ThemeCat-pedagogie {
-      background: rgba(var(--black), 0.35) !important;
-      color: white !important;
-    } */
-  }
-
   .as-content {
     display: block !important;
     color: rgba(var(--black), 1) !important;
@@ -153,10 +135,6 @@
 	order: 9999;
 }
 
-.widget.travailafaire .piece-jointe {
-  padding: 0 !important;
-}
-
 .widget.travailafaire .liste-imbriquee ul > li:not(:last-child) {
   border-bottom: 1px solid rgba(var(--black), 0.1) !important;
 }
@@ -168,4 +146,22 @@
 .widget.travailafaire .as-footer {
   display: flex !important;
   z-index: 10 !important;
+}
+
+.tag-style {
+  display: none !important;
+  /* padding: 0.5rem 0.85rem !important;
+  background: rgba(var(--black), 0.05) !important;
+  color: rgba(var(--black), 0.45) !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+
+  &::after {
+    display: none !important;
+  }
+
+  &.ThemeCat-pedagogie {
+    background: rgba(var(--black), 0.35) !important;
+    color: white !important;
+  } */
 }

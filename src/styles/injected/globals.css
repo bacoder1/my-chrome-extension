@@ -32,6 +32,96 @@
   --anim-wobble: wobble 0.25s ease-in-out infinite alternate;
 }
 
+body:not(.ThemeAccessible) .ThemeProduitPN, body:not(.ThemeAccessible) .ThemeProduitPN .disable-dark-mode, body:not(.ThemeAccessible) .ThemePronote, body:not(.ThemeAccessible) .ThemePronote .disable-dark-mode, body:not(.ThemeAccessible) .ThemeCat-communication, body:not(.ThemeAccessible) .ThemeCat-communication .disable-dark-mode, body:not(.ThemeAccessible) .ThemeVert, body:not(.ThemeAccessible) .ThemeVert .disable-dark-mode {
+  --theme-sombre: rgb(var(--accent-color-darker)) !important;
+  --theme-sombre-scaleMoins50: color-mix(
+    in srgb,
+    rgb(var(--accent-color-darker)) 50%,
+    black
+  ) !important;
+  --theme-sombre-scaleMoins20: color-mix(
+    in srgb,
+    rgb(var(--accent-color-darker)) 80%,
+    black
+  ) !important;
+  --theme-sombre-scalePlus10: color-mix(
+    in srgb,
+    rgb(var(--accent-color-darker)) 90%,
+    white
+  ) !important;
+  --theme-sombre-scalePlus60: color-mix(
+    in srgb,
+    rgb(var(--accent-color-darker)) 40%,
+    white
+  ) !important;
+
+  --theme-foncee: rgb(var(--accent-color-dark)) !important;
+  --theme-foncee-scaleMoins50: color-mix(
+    in srgb,
+    rgb(var(--accent-color-dark)) 50%,
+    black
+  ) !important;
+  --theme-foncee-scaleMoins20: color-mix(
+    in srgb,
+    rgb(var(--accent-color-dark)) 80%,
+    black
+  ) !important;
+  --theme-foncee-scalePlus10: color-mix(
+    in srgb,
+    rgb(var(--accent-color-dark)) 90%,
+    white
+  ) !important;
+  --theme-foncee-scalePlus60: color-mix(
+    in srgb,
+    rgb(var(--accent-color-dark)) 40%,
+    white
+  ) !important;
+
+  --theme-moyen1: rgb(var(--accent-color-primary)) !important;
+  --theme-moyen1-scaleMoins50: color-mix(
+    in srgb,
+    rgb(var(--accent-color-primary)) 50%,
+    black
+  ) !important;
+  --theme-moyen1-scaleMoins20: color-mix(
+    in srgb,
+    rgb(var(--accent-color-primary)) 80%,
+    black
+  ) !important;
+  --theme-moyen1-scalePlus10: color-mix(
+    in srgb,
+    rgb(var(--accent-color-primary)) 90%,
+    white
+  ) !important;
+  --theme-moyen1-scalePlus60: color-mix(
+    in srgb,
+    rgb(var(--accent-color-primary)) 40%,
+    white
+  ) !important;
+
+  --theme-claire: rgb(var(--accent-color-lighter)) !important;
+  --theme-claire-scaleMoins50: color-mix(
+    in srgb,
+    rgb(var(--accent-color-lighter)) 50%,
+    black
+  ) !important;
+  --theme-claire-scaleMoins20: color-mix(
+    in srgb,
+    rgb(var(--accent-color-lighter)) 80%,
+    black
+  ) !important;
+  --theme-claire-scalePlus10: color-mix(
+    in srgb,
+    rgb(var(--accent-color-lighter)) 90%,
+    white
+  ) !important;
+  --theme-claire-scalePlus60: color-mix(
+    in srgb,
+    rgb(var(--accent-color-lighter)) 40%,
+    white
+  ) !important;
+}
+
 :root:has(body.dark) {
   /* colors */
   --background: 10, 10, 10;
@@ -126,7 +216,7 @@ body {
   display: none !important;
 }
 
-.widget.travailafaire .piece-jointe a,
+.piece-jointe a,
 .widget.ressourcepedagogique .pj-date-contain a {
   display: 0.28rem 0.56rem !important;
   border-radius: 0.5rem !important;
@@ -138,6 +228,10 @@ body {
   &:hover {
     background-color: rgba(rgba(0, 106, 145, 0.15), 0.3) !important;
   }
+}
+
+.piece-jointe {
+  padding: 0 !important;
 }
 
 .widget.wobbling {
@@ -416,6 +510,14 @@ div.cta-conteneur {
     color: rgba(var(--accent-color-darker), 1) !important;
   }
 
+  &.small-bt {
+    --hover: rgba(var(--accent-color-primary), 0.2) !important;
+    --stroke-color: rgba(var(--accent-color-primary), 0.1) !important;
+    background-color: rgba(var(--accent-color-primary), 0.1) !important;
+    border-color: rgba(var(--accent-color-primary), 0.1) !important;
+    color: rgba(var(--accent-color-dark), 1) !important;
+  }
+
   &:hover {
     background-color: var(--hover) !important;
     border-color: var(--hover) !important;
@@ -486,4 +588,37 @@ div.cta-conteneur:has(i.as-button.icon_fermeture_widget) {
       background-color: rgba(var(--light-gray), 0.25) !important;
     }
   }
+}
+
+.ie-titre-couleur,
+.ie-titre-couleur-lowercase {
+  color: rgba(var(--accent-color-dark), 1) !important;
+}
+
+.ie-titre-gros {
+  color: rgba(var(--accent-color-dark), 1) !important;
+}
+
+.ObjetListe.background-selec .liste_celluleGrid {
+  --subject-color: var(--accent-color-primary);
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+  &.selected,
+  &.selected.voileBleuCellule {
+    --stroke-color: rgba(var(--subject-color), 0.2) !important;
+    background-color: rgba(var(--subject-color), 0.2) !important;
+  }
+
+  &.voileBleuCellule {
+    --stroke-color: rgba(var(--subject-color), 0.1) !important;
+    background-color: rgba(var(--subject-color), 0.1) !important;
+
+    &::before {
+      background-color: transparent !important;
+    }
+  }
+}
+
+.Zone-DetailsNotes .infos-note i.header-icon {
+  color: rgba(var(--accent-color-dark), 1) !important;
 }

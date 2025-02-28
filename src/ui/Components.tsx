@@ -1,4 +1,10 @@
-import { Calendar, Check, ChevronRight, LucideIcon } from "lucide-react";
+import {
+  Calendar,
+  Check,
+  ChevronRight,
+  EllipsisVertical,
+  LucideIcon,
+} from "lucide-react";
 import React, {
   ChangeEvent,
   forwardRef,
@@ -8,8 +14,9 @@ import React, {
 } from "react";
 import { ColorListItemProps, useAppState } from "../context/StateContext";
 import { AnimatePresence, motion } from "motion/react";
+import Popover from "./custom/Popover";
 
-interface ListProps {
+interface ListProps extends React.HTMLAttributes<HTMLDivElement> {
   style?: React.CSSProperties;
   className?: string;
   children: React.ReactNode;
@@ -21,12 +28,14 @@ export const List: React.FC<ListProps> = ({
   className = "",
   children,
   onClick,
+  onMouseLeave,
 }: ListProps) => {
   return (
     <div
       className={`card flex w-full select-none flex-col overflow-hidden ${className}`}
       style={style}
       onClick={onClick}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </div>
@@ -36,7 +45,7 @@ export const List: React.FC<ListProps> = ({
 interface ListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   subtitle?: string;
-  icon: LucideIcon | string;
+  icon?: LucideIcon | string;
   color?: string;
   checkbox?: React.ReactNode;
   index: number;
@@ -63,6 +72,8 @@ export const ListItem: React.FC<ListItemProps> = ({
   trailing,
   children,
   iconType,
+  onMouseEnter,
+  onMouseLeave,
 }: ListItemProps) => {
   return (
     <div
@@ -72,6 +83,8 @@ export const ListItem: React.FC<ListItemProps> = ({
         ...style,
       }}
       onClick={onClick}
+      onMouseLeave={onMouseLeave}
+      onMouseEnter={onMouseEnter}
     >
       {leading && leading}
       {typeof Icon === "string" ? (
@@ -85,14 +98,14 @@ export const ListItem: React.FC<ListItemProps> = ({
             <img src={Icon} height={iconSize} width={iconSize} />
           )}
         </div>
-      ) : (
+      ) : Icon ? (
         <div
           style={{ backgroundColor: color }}
           className="m-2 mr-3 flex items-center justify-center rounded-lg p-1"
         >
           <Icon size={iconSize} color={color ? "#FFFFFF" : "#656565"} />
         </div>
-      )}
+      ) : null}
       {children ? (
         children
       ) : (
@@ -234,15 +247,23 @@ interface DateInputProps {
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const DateInput: React.FC<DateInputProps> = ({className, style, onChange}: DateInputProps) => {
+export const DateInput: React.FC<DateInputProps> = ({
+  className,
+  style,
+  onChange,
+}: DateInputProps) => {
   return (
     <div
-      className={`${className} relative flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg  text-[#656565] transition-colors ease-in-out hover:bg-[#e9e5e5]`}
+      className={`${className} relative flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg text-[#656565] transition-colors ease-in-out hover:bg-[#e9e5e5]`}
       style={style}
     >
       <Calendar size={20} />
       <p className="font-semibold">Ajouter une date</p>
-      <input type="date" className="absolute size-full inset-0 cursor-pointer z-10" onChange={(event) => onChange && onChange(event)} />
+      <input
+        type="date"
+        className="absolute inset-0 z-10 size-full cursor-pointer"
+        onChange={(event) => onChange && onChange(event)}
+      />
     </div>
   );
 };
@@ -723,5 +744,124 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {children}
     </motion.button>
+  );
+};
+
+interface ChoiseProps {
+  choices: string[];
+  style?: React.CSSProperties;
+  onSelect: (choice: string) => void;
+  className?: string;
+  accentColor?: string;
+}
+
+export const Choice: React.FC<ChoiseProps> = ({
+  choices,
+  style,
+  onSelect,
+  className = "",
+  accentColor,
+}: ChoiseProps) => {
+  const [selected, setSelected] = useState(choices[0]);
+  const { themeColor } = useAppState();
+  if (!accentColor) accentColor = `rgba(${themeColor.rgb.primary}, 1)`;
+
+  return (
+    <motion.div
+      className={`m-2 flex cursor-pointer select-none rounded-md border border-black/50 text-center font-semibold uppercase tracking-wider ${className}`}
+      style={style}
+      whileTap={{ scale: 0.95 }}
+    >
+      {choices.map((choice) => (
+        <motion.div
+          onClick={() => {
+            setSelected(choice);
+            onSelect(choice);
+          }}
+          animate={{
+            backgroundColor:
+              selected === choice
+                ? `rgba(${themeColor.rgb.primary}, 0.15)`
+                : "transparent",
+            color: selected === choice ? accentColor : "rgba(0, 0, 0, 0.5)",
+          }}
+          className="flex-1 p-1 text-center"
+        >
+          {choice}
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+};
+
+interface MenuButton {
+  label: string;
+  icon: LucideIcon;
+  id: string;
+}
+
+interface MenuProps {
+  buttons: MenuButton[];
+  style?: React.CSSProperties;
+  onSelect: (button: MenuButton) => void;
+  className?: string;
+  selectedId: () => Promise<string>;
+  accentColor?: string;
+}
+
+export const Menu: React.FC<MenuProps> = ({
+  style,
+  onSelect,
+  className = "",
+  buttons,
+  selectedId,
+  accentColor
+}: MenuProps) => {
+  const { themeColor } = useAppState();
+  if (!accentColor) accentColor = `rgba(${themeColor.rgb.primary}, 1)`;
+
+  const [currentSelectedId, setCurrentSelectedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch the selected ID asynchronously
+    selectedId().then((id) => {
+      setCurrentSelectedId(id);
+    });
+  }, [selectedId]);
+
+  return (
+    <motion.div
+      className={`flex cursor-pointer select-none rounded-md p-1 transition-colors uppercase tracking-wider hover:bg-black/[0.04] delay-200 ease-out ${className}`}
+      style={{...style,}}
+      whileTap={{ scale: 0.95 }}
+    >
+      <EllipsisVertical size={20} />
+      <Popover className="!bottom-auto !left-auto !right-6 !top-6">
+        <div className="flex flex-col p-2 gap-0.5">
+          {buttons.map((button) => {
+            const Icon = button.icon;
+            return (
+              <motion.div
+                className="flex items-center text-sm px-2 rounded-md py-1 transition-colors"
+                whileHover={{backgroundColor: `rgba(${themeColor.rgb.primary}, 0.05) !important`}}
+                onMouseDown={() => {
+                  console.log("hey", button)
+                  onSelect(button);
+                  setCurrentSelectedId(button.id);
+                }}
+                style={{
+                  backgroundColor:
+                    currentSelectedId === button.id ? `rgba(${themeColor.rgb.primary}, 0.15)` : "transparent",
+                    color: currentSelectedId === button.id ? `rgba(${themeColor.rgb.dark}, 1)` : `rgba(${themeColor.rgb.dark}, 0.6)`
+                }}
+              >
+                <Icon />
+                <p className="ml-2">{button.label}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+      </Popover>
+    </motion.div>
   );
 };

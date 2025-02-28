@@ -43,7 +43,7 @@ export const openDatePickerModal = ({ onDateSelected }: DatePickerModalOptions):
 
     // Remplir les jours du mois
     for (let day = 1; day <= daysInMonth; day++) {
-      currentWeek.push(day);
+      currentWeek.push(day + 1);
       if (currentWeek.length === 7) {
         weeks.push(currentWeek);
         currentWeek = [];

@@ -10,16 +10,20 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.tsx-loader-CZ42ffWH.js"
+        "assets/content.tsx-loader-Bw7UKZPL.js"
       ],
       "matches": [
         "https://*.index-education.net/pronote/eleve.html"
       ],
       "css": [
-        "assets/content-BdGHKUhp.css"
+        "assets/content-DjD9CDdl.css"
       ]
     }
   ],
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
   "web_accessible_resources": [
     {
       "matches": [
@@ -32,18 +36,29 @@
     },
     {
       "matches": [
+        "https://3310001c.index-education.net/*"
+      ],
+      "resources": [
+        "intercept.js"
+      ],
+      "use_dynamic_url": false
+    },
+    {
+      "matches": [
         "https://*.index-education.net/*"
       ],
       "resources": [
-        "assets/resize_image-CJE78n43.js",
-        "assets/content.tsx-CZBfvPao.js"
+        "assets/resize_image-50o9hnDU.js",
+        "assets/content.tsx-GzVzfwWT.js"
       ],
       "use_dynamic_url": false
     }
   ],
   "permissions": [
+    "debugger",
     "storage",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "webRequest"
   ],
   "host_permissions": [
     "<all_urls>"

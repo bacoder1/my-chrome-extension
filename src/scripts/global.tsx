@@ -92,7 +92,7 @@ export default function global() {
 
   document
     .querySelectorAll(
-      ".widget.travailafaire .liste-imbriquee ul li > .conteneur-item .titre-matiere, .widget.ressourcepedagogique ul li .wrap h3, .widget.notes ul li h3 > span, .widget.competences ul li .wrap h3 > span",
+      ".widget.travailafaire .liste-imbriquee ul li > .conteneur-item .titre-matiere, .widget.ressourcepedagogique ul li .wrap h3, .widget.notes ul li h3 > span, .widget.competences ul li .wrap h3 > span, .ListeDernieresNotes:not(:has(.liste-footer)) .zone-centrale .titre-principal:first-child, .ListeDernieresNotes:not(:has(.liste-footer)) .zone-centrale .titre-principal > div:first-child, .ListeDernieresNotes .zone-centrale .titre-principal .ie-titre-gros, .Zone-DetailsNotes > header > div > div:nth-child(1), .Zone-DetailsNotes > header > div",
     )
     .forEach((element: Element) => changeSubjectName(element));
 
@@ -104,6 +104,20 @@ export default function global() {
 
   document
     .querySelectorAll(".widget.edt ul.liste-cours > li")
+    .forEach((element: any) => {
+      const colorBar = element.querySelector(".trait-matiere");
+
+      if (colorBar) {
+        const color = window.getComputedStyle(colorBar).backgroundColor;
+
+        console.log(color);
+
+        element.style.setProperty("--subject-color", extractRgb(color));
+      }
+    });
+
+    document
+    .querySelectorAll(".liste_celluleGrid")
     .forEach((element: any) => {
       const colorBar = element.querySelector(".trait-matiere");
 

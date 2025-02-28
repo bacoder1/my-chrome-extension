@@ -3,7 +3,7 @@ import Settings from "./ui/Settings";
 import Header from "./ui/Header";
 
 const Popup: React.FC = () => (
-  <div className="relative flex min-h-[26rem] w-[21rem] flex-col overflow-hidden">
+  <div className="relative flex min-h-[36rem] w-[21rem] flex-col overflow-hidden">
     <Header />
     <Settings />
   </div>
