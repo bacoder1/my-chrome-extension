@@ -10,10 +10,10 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.tsx-loader-Bw7UKZPL.js"
+        "assets/content.tsx-loader-DKkExk4R.js"
       ],
       "matches": [
-        "https://*.index-education.net/pronote/eleve.html"
+        "https://*.index-education.net/pronote/*"
       ],
       "css": [
         "assets/content-DjD9CDdl.css"
@@ -49,7 +49,7 @@
       ],
       "resources": [
         "assets/resize_image-50o9hnDU.js",
-        "assets/content.tsx-GzVzfwWT.js"
+        "assets/content.tsx-TOGgwXbl.js"
       ],
       "use_dynamic_url": false
     }

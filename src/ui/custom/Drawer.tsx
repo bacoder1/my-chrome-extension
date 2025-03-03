@@ -47,6 +47,7 @@ const Drawer: React.FC<DrawerProps> = ({ children, state, onDismiss }: DrawerPro
             drag="y"
             className="w-full rounded-t-[10px] bg-white"
             dragConstraints={{ top: 0 }}
+            style={{ maxHeight: "90vh", overflowY: "auto" }} 
             animate={{
               y: 0,
               transition: {

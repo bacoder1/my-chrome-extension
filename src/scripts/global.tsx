@@ -51,7 +51,7 @@ export default function global() {
 
       if (pretty === "Pas de cours") return;
 
-      if (!subjectData[subject] && subject && pretty) subjectData[subject] = {};
+      if (!subjectData[subject]) subjectData[subject] = {};
 
       if (color?.startsWith("rgb")) color = rgbToHex(color).toUpperCase();
 

@@ -22,5 +22,5 @@ export function getPronoteAverage(grades: Grade[], target = "value") {
 	);
 
 	// Retourner la moyenne globale en divisant par le nombre de matières
-	return totalAverage / Object.keys(groupedBySubject).length;
+	return Number((totalAverage / Object.keys(groupedBySubject).length).toFixed(2));
 }

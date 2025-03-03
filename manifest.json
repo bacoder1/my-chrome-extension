@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "js": ["src/scripts/content.tsx"],
-      "matches": ["https://*.index-education.net/pronote/eleve.html"]
+      "matches": ["https://*.index-education.net/pronote/*"]
     }
   ],
   "background": {
