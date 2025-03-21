@@ -14,6 +14,10 @@ import { Subject } from "./SubjectsSettings";
 import Drawer from "../custom/Drawer";
 import AverageHistoryGraph from "../custom/AverageHistoryGraph";
 import { getAverageDiff } from "../../utils/calc/average_diff";
+import { adjustColor } from "../../utils/color/adjust_color";
+import Picker from "../custom/Picker";
+import { ChevronDown } from "lucide-react";
+import { getSubjectAverage } from "../../utils/calc/subject_average";
 
 const GradesSettings: React.FC = () => {
   const [grades, setGrades] = useState<Grade[]>([]);
@@ -23,60 +27,192 @@ const GradesSettings: React.FC = () => {
   const [studentHistory, setStudentHistory] = useState<any>([]);
   const [classHistory, setClassHistory] = useState<any>([]);
 
-  const [maxAverage, setMaxAverage] = useState<number | null>(null);
-  const [minAverage, setMinAverage] = useState<number | null>(null);
+  const [periods, setPeriods] = useState<string[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState("");
 
   useEffect(() => {
-    chrome.storage.local.get("DernieresNotes", (result) => {
-      const rawGrades = result.DernieresNotes;
-
-      if (!rawGrades) return;
-
-      const student_average = Number(
-        rawGrades.donneesSec.data.moyGenerale.V.replace(",", "."),
-      );
-      const class_average = Number(
-        rawGrades.donneesSec.data.moyGeneraleClasse.V.replace(",", "."),
+    chrome.storage.local.get("DernieresNotes", async (result) => {
+      let rawGrades = result.DernieresNotes[selectedPeriod];
+      const isYear = selectedPeriod === "Année";
+      let latestPeriod = "";
+      let latestDate = new Date(0); // January 1, 1970
+      let periods = Object.keys(result.DernieresNotes).filter(
+        (key) => key !== "Année",
       );
 
-      const grades = rawGrades.donneesSec.data.listeDevoirs.V.map(
-        (grade: any) => decodeGrade(grade),
-      );
+      for (let period of periods) {
+        let rawGrades =
+          result.DernieresNotes[period]?.donneesSec?.data?.listeDevoirs?.V;
 
-      const subject_averages = rawGrades.donneesSec.data.listeServices.V.map(
-        (subject: any) => decodeSubjectAverage(subject),
-      );
+        if (rawGrades && rawGrades.length > 0) {
+          // Find the most recent grade date in this period
+          let mostRecentGradeDate = rawGrades
+            .map((grade: any) => {
+              const [day, month, year] = grade.date.V.split("/").map(Number);
 
-      const studentHistory = getAveragesHistory(
-        grades,
-        "value",
-        student_average,
-      );
-      const classHistory = getAveragesHistory(grades, "average", class_average);
+              return new Date(year, month - 1, day);
+            })
+            .reduce(
+              (latest: any, current: any) =>
+                current > latest ? current : latest,
+              new Date(0), // Start with oldest date as initial value
+            );
 
-      setStudentHistory(studentHistory);
-      setClassHistory(classHistory);
+          if (mostRecentGradeDate > latestDate) {
+            latestDate = mostRecentGradeDate;
+            latestPeriod = period;
+          }
+        }
+      }
 
-      setSubjectAverages(subject_averages);
+      // Only set the selected period if it hasn't been set already
+      if (selectedPeriod === "") {
+        setSelectedPeriod(latestPeriod || "Année"); // Fallback to "Année" if no period has grades
+      }
 
-      setGrades(grades);
-      setStudentAverage(student_average); // Update state with fetched average
-      setClassAverage(class_average); // Update state with fetched average
+      setPeriods([...periods, "Année"]);
 
-      setMaxAverage(getPronoteAverage(grades, "max"));
-      setMinAverage(getPronoteAverage(grades, "min"));
+      if (isYear) {
+        let grades = [];
+
+        for (let key in result.DernieresNotes) {
+          grades.push(
+            ...result.DernieresNotes[key].donneesSec.data.listeDevoirs.V.map(
+              (grade: any) => decodeGrade(grade),
+            ),
+          );
+        }
+
+        console.log(grades);
+        const student_average = getPronoteAverage(grades, "value");
+        const class_average = getPronoteAverage(grades, "average");
+        console.log(student_average);
+
+        const groupedBySubject = grades.reduce(
+          (acc: Record<string, Grade[]>, grade) => {
+            (acc[grade.subject.name] ||= []).push(grade);
+            return acc;
+          },
+          {},
+        );
+
+        let subject_averages = [];
+
+        for (let key in groupedBySubject) {
+          const grades = groupedBySubject[key];
+          const result = await chrome.storage.local.get("subjectData");
+          const color = result.subjectData?.[key]?.color; // Use optional chaining to avoid errors if undefined
+
+          subject_averages.push({
+            student: { kind: 0, points: getSubjectAverage(grades, "value") },
+            outOf: { kind: 0, points: 20 },
+            defaultOutOf: { kind: 0, points: 20 },
+            class_average: {
+              kind: 0,
+              points: getSubjectAverage(grades, "average"),
+            },
+            min: { kind: 0, points: getSubjectAverage(grades, "min") },
+            max: { kind: 0, points: getSubjectAverage(grades, "max") },
+            subject: {
+              id: key,
+              name: key,
+              inGroups: false,
+            },
+            backgroundColor: color,
+          });
+        }
+
+        console.log(subject_averages);
+        let studentHistory = [];
+        let classHistory = [];
+
+        for (let key in result.DernieresNotes) {
+          const grades = result.DernieresNotes[
+            key
+          ].donneesSec.data.listeDevoirs.V.map((grade: any) =>
+            decodeGrade(grade),
+          );
+
+          studentHistory.push(...getAveragesHistory(grades, "value"));
+          classHistory.push(...getAveragesHistory(grades, "average"));
+        }
+
+        setStudentHistory(studentHistory);
+        setClassHistory(classHistory);
+
+        setSubjectAverages(subject_averages as any);
+
+        console.log(
+          grades,
+          student_average,
+          class_average,
+          studentHistory,
+          classHistory,
+          subject_averages,
+        );
+
+        setGrades(grades);
+        setStudentAverage(student_average); // Update state with fetched average
+        setClassAverage(class_average); // Update state with fetched average
+      } else if (rawGrades) {
+        const student_average = Number(
+          rawGrades.donneesSec.data.moyGenerale.V.replace(",", "."),
+        );
+        const class_average = Number(
+          rawGrades.donneesSec.data.moyGeneraleClasse.V.replace(",", "."),
+        );
+
+        const grades = rawGrades.donneesSec.data.listeDevoirs.V.map(
+          (grade: any) => decodeGrade(grade),
+        );
+
+        const subject_averages = rawGrades.donneesSec.data.listeServices.V.map(
+          (subject: any) => decodeSubjectAverage(subject),
+        );
+
+        const studentHistory = getAveragesHistory(
+          grades,
+          "value",
+          student_average,
+        );
+        const classHistory = getAveragesHistory(
+          grades,
+          "average",
+          class_average,
+        );
+
+        setStudentHistory(studentHistory);
+        setClassHistory(classHistory);
+
+        setSubjectAverages(subject_averages);
+
+        setGrades(grades);
+        setStudentAverage(student_average); // Update state with fetched average
+        setClassAverage(class_average); // Update state with fetched average
+      }
     });
-  }, []); // Empty dependency array to run only once
+  }, [selectedPeriod]); // Empty dependency array to run only once
 
   return (
     <div className="flex flex-col p-2">
       {/* Only render Graph if averages are loaded */}
-      {studentAverage && classAverage && minAverage && maxAverage ? (
+      <Picker
+        selected={async () => {
+          return { label: selectedPeriod };
+        }}
+        onSelect={(item) => item && setSelectedPeriod(item.label)}
+        data={periods.map((period) => ({ label: period }))}
+      >
+        <div className="card flex h-9 cursor-pointer items-center justify-center gap-2 text-sm font-semibold transition-colors ease-in-out hover:bg-black/5">
+          <span>{selectedPeriod}</span>
+          <ChevronDown size={20} />
+        </div>
+      </Picker>
+      <div className="h-5" />
+      {studentAverage && classAverage ? (
         <AverageHistoryGraph
           overall={studentAverage}
           classAverage={classAverage}
-          maxAverage={maxAverage}
-          minAverage={minAverage}
           studentData={studentHistory}
           classData={classHistory}
           studentLabel="Moyenne gén."
@@ -91,6 +227,7 @@ const GradesSettings: React.FC = () => {
 interface SubjectsProps {
   subjectAverages: SubjectAverage[];
   grades: Grade[];
+  isYear?: boolean;
 }
 
 interface SubjectData {
@@ -115,15 +252,6 @@ const Subjects: React.FC<SubjectsProps> = ({
     grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
     "average",
     selectedSubject?.class_average?.points,
-  );
-
-  const maxAverage = getPronoteAverage(
-    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
-    "max",
-  );
-  const minAverage = getPronoteAverage(
-    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
-    "min",
   );
 
   const studentDiff = getAverageDiff(
@@ -151,14 +279,12 @@ const Subjects: React.FC<SubjectsProps> = ({
           {selectedSubject && (
             <>
               <AverageHistoryGraph
-                overall={selectedSubject.student?.points || 10}
-                classAverage={selectedSubject.class_average?.points || 10}
+                overall={selectedSubject.student?.points || NaN}
+                classAverage={selectedSubject.class_average?.points || NaN}
                 studentData={studentHistory}
                 classData={classHistory}
                 studentLabel="Moyenne"
                 classLabel="Moyenne classe"
-                maxAverage={maxAverage}
-                minAverage={minAverage}
                 color={
                   subjectData[selectedSubject.subject.name]?.color
                     ? subjectData[selectedSubject.subject.name].color
@@ -191,7 +317,7 @@ const Subjects: React.FC<SubjectsProps> = ({
                   />
                 )}
               </List>
-              <List className="mt-4 mb-2">
+              <List className="mb-2 mt-4">
                 <ListItem
                   className="px-3 py-1 !font-medium text-black/50"
                   trailing={
@@ -235,10 +361,13 @@ const Subjects: React.FC<SubjectsProps> = ({
                   index={1}
                 />
               </List>
-              <Heading title={`Notes - ${grades
-                  .filter(
+              <Heading
+                title={`Notes - ${
+                  grades.filter(
                     (g) => g.subject.name === selectedSubject.subject.name,
-                  ).length}`}  />
+                  ).length
+                }`}
+              />
               <List>
                 {grades
                   .filter(
@@ -246,11 +375,14 @@ const Subjects: React.FC<SubjectsProps> = ({
                   )
                   .map((grade, index) => (
                     <ListItem
-                      subtitle={"le "+grade.date.toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      subtitle={
+                        "le " +
+                        grade.date.toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      }
                       className="px-3 py-2"
                       trailing={
                         <motion.div layout className="flex items-center">
@@ -276,16 +408,28 @@ const Subjects: React.FC<SubjectsProps> = ({
       <Heading title="Matières" />
       <List>
         {subjectAverages.map((subjectAverage, index) => {
-          const emoji = subjectData[subjectAverage.subject.name]?.emoji ? subjectData[subjectAverage.subject.name].emoji : getSubjectEmoji(subjectAverage.subject.name);
+          const emoji = subjectData[subjectAverage.subject.name]?.emoji
+            ? subjectData[subjectAverage.subject.name].emoji
+            : getSubjectEmoji(subjectAverage.subject.name);
 
           return (
             <ListItem
               icon={`https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${emoji.codePointAt(0)?.toString(16) || "2753"}.svg`}
-              title={subjectData[subjectAverage.subject.name]?.pretty ? subjectData[subjectAverage.subject.name].pretty : formatSubjectName(subjectAverage.subject.name)}
+              title={
+                subjectData[subjectAverage.subject.name]?.pretty
+                  ? subjectData[subjectAverage.subject.name].pretty
+                  : formatSubjectName(subjectAverage.subject.name)
+              }
               style={{
                 backgroundColor: subjectData[subjectAverage.subject.name]?.color
                   ? subjectData[subjectAverage.subject.name].color + "05"
                   : subjectAverage.backgroundColor + "05",
+                color: subjectData[subjectAverage.subject.name]?.color
+                  ? adjustColor(
+                      subjectData[subjectAverage.subject.name].color,
+                      -100,
+                    )
+                  : adjustColor(subjectAverage.backgroundColor, -100),
               }}
               className="cursor-pointer"
               onClick={() => {
@@ -294,12 +438,15 @@ const Subjects: React.FC<SubjectsProps> = ({
               index={index}
               chevron={false}
               trailing={
-                <motion.div layout className="mr-3 flex items-center">
+                <motion.div
+                  layout
+                  className="mr-3 flex items-center text-black"
+                >
                   <div className="flex items-end">
                     <div className="text-lg font-bold">
                       {subjectAverage.student?.points.toFixed(2)}
                     </div>
-                    <span className="ml-0.5 mb-1 text-sm font-semibold text-black/30">
+                    <span className="mb-1 ml-0.5 text-sm font-semibold text-black/30">
                       /20
                     </span>
                   </div>

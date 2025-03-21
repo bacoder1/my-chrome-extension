@@ -208,15 +208,11 @@ input.search {
   }
 }
 
-.VictoryContainer > svg > g > g:last-child > path {
+.VictoryContainer > svg > g:has(:not(g:nth-child(4))) > g:last-child > path,
+.VictoryContainer > svg > g:has(g:nth-child(4)) > g:nth-child(2) > path {
   transition: all 100ms cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
-  box-shadow: 0px 0px 0px 16px currentColor;
   fill: currentColor !important;
   stroke: currentColor !important;
   stroke-opacity: 0.1;
-  stroke-width: 15px !important;
-}
-
-.VictoryContainer path {
-  transition: all 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  stroke-width: 21px !important;
 }

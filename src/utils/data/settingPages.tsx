@@ -1,7 +1,7 @@
 import {
   ChartArea,
+  EllipsisVertical,
   LucideIcon,
-  Minus,
   Palette,
   Sparkles,
   SwatchBook,
@@ -14,7 +14,7 @@ import ProfileSettings from "../../ui/settings/ProfileSettings";
 import SubjectsSettings from "../../ui/settings/SubjectsSettings";
 import ResetButton from "../../ui/custom/ResetButton";
 import GradesSettings from "../../ui/settings/GradesSettings";
-import { Menu } from "../../ui/Components";
+import Picker from "../../ui/custom/Picker";
 
 export interface settingsPage {
   name: string;
@@ -68,24 +68,44 @@ const settingsPages: settingsPage[] = [
     icon: ChartArea,
     page: GradesSettings,
     headerTrailing: (
-      <Menu
-        onSelect={(button) => {
-          console.log("button", button);
-          if (button.id === "single") {
+      // <Menu
+      //   onSelect={(button) => {
+      //     console.log("button", button);
+      //     if (button.id === "single") {
+      //       chrome.storage.sync.set({ chartDualLineMode: false });
+      //     } else if (button.id === "double") {
+      //       chrome.storage.sync.set({ chartDualLineMode: true });
+      //     }
+      //   }}
+      //   buttons={[
+      //     { label: "Vue unique", id: "single", icon: Minus },
+      //     { label: "Vue multiple", id: "double", icon: Minus },
+      //   ]}
+      //   selectedId={async () => {
+      //     const result = await chrome.storage.sync.get("chartDualLineMode");
+      //     return result.chartDualLineMode ? "double" : "single";
+      //   }}
+      // />
+      <Picker
+        data={[{ label: "Vue unique" }, { label: "Vue multiple" }]}
+        onSelect={(item) => {
+          if (item?.label === "Vue unique") {
             chrome.storage.sync.set({ chartDualLineMode: false });
-          } else if (button.id === "double") {
+          } else if (item?.label === "Vue multiple") {
             chrome.storage.sync.set({ chartDualLineMode: true });
           }
         }}
-        buttons={[
-          { label: "Vue unique", id: "single", icon: Minus },
-          { label: "Vue multiple", id: "double", icon: Minus },
-        ]}
-        selectedId={async () => {
+        selected={async () => {
           const result = await chrome.storage.sync.get("chartDualLineMode");
-          return result.chartDualLineMode ? "double" : "single";
+          return result.chartDualLineMode
+            ? { label: "Vue multiple" }
+            : { label: "Vue unique" };
         }}
-      />
+      >
+        <div className="card !rounded-full p-2">
+          <EllipsisVertical size={18} />
+        </div>
+      </Picker>
     ),
   },
   // {

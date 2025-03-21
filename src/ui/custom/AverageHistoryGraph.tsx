@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppState } from "../../context/StateContext";
 import { AnimatePresence, motion } from "motion/react";
-import { VictoryChart, VictoryGroup, VictoryLine, VictoryScatter, VictoryTheme, VictoryVoronoiContainer } from "victory";
+import {
+  VictoryChart,
+  VictoryClipContainer,
+  VictoryGroup,
+  VictoryLine,
+  VictoryScatter,
+  VictoryTheme,
+  VictoryVoronoiContainer,
+} from "victory";
 import AnimatedNumber from "./AnimatedNumber";
-import { ListItem } from "../Components";
 
 interface AverageHistoryGraphProps {
   overall: number;
@@ -13,8 +20,6 @@ interface AverageHistoryGraphProps {
   studentLabel: string;
   classLabel: string;
   color?: string;
-  maxAverage: number;
-  minAverage: number;
 }
 
 const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
@@ -24,8 +29,6 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
   classData,
   studentLabel,
   classLabel,
-  maxAverage,
-  minAverage,
   color,
 }: AverageHistoryGraphProps) => {
   const processData = (data: any) => {
@@ -41,12 +44,8 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
   studentData = processData(studentData);
   classData = processData(classData);
 
-  console.log(studentData, classData);
-
   const { themeColor } = useAppState();
   if (!color) accentColor = `rgba(${themeColor.rgb.primary}, 1)`;
-
-  console.log(studentData, classData);
 
   // Use props to initialize state
   const [studentAverage, setStudentAverage] = useState(overall);
@@ -62,12 +61,15 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
 
   const chartRef = useRef<null | HTMLDivElement>(null);
 
-  const [minHeight, setMinHeight] = useState<number | null>(null);
-
   const [chartExpanded, setChartExpanded] = useState(false);
 
   const studentButtonRef = useRef<null | HTMLDivElement>(null);
   const classButtonRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    setStudentAverage(overall);
+    setClassAverage(classAverage);
+  }, [overall, classAverage]);
 
   useEffect(() => {
     chrome.storage.sync.get("chartDualLineMode", (result) => {
@@ -81,23 +83,8 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
     });
   }, []);
 
-  useEffect(() => {
-    if (!chartRef.current) return;
-
-    const chart = chartRef.current.firstChild as HTMLElement;
-    const averagesElement = chartRef.current.querySelector(
-      ".averages",
-    ) as HTMLElement;
-
-    if (chart && averagesElement) {
-      const minHeight = chart.offsetHeight + averagesElement.offsetHeight + 20;
-
-      setMinHeight(minHeight);
-    }
-  }, [chartRef]);
-
-  const chartWidth = 280;
-  const chartHeight = 150;
+  const chartWidth = 450;
+  const chartHeight = 160;
 
   return (
     <motion.div
@@ -111,14 +98,6 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
           !classButtonRef.current?.contains(event.target as Node)
         )
           setChartExpanded(!chartExpanded);
-      }}
-      animate={{
-        height:
-          chartExpanded && minHeight
-            ? "auto"
-            : !chartExpanded && minHeight
-              ? minHeight
-              : "auto",
       }}
     >
       <div
@@ -138,24 +117,26 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
         <VictoryChart
           width={chartWidth}
           height={chartHeight}
-          padding={0}
+          padding={{ right: 25, left: 10, top: 16, bottom: 16 }}
           theme={VictoryTheme.clean}
-          domainPadding={{ y: 16 }}
+          domainPadding={{ y: 8 }}
           defaultAxes={{
             independent: <></>,
             dependent: <></>,
           }}
           containerComponent={
             <VictoryVoronoiContainer
+              radius={40}
               onDeactivated={() => {}}
               onActivated={(points) => {
+                if (!points || points.length === 0) return;
+
                 const yValue = points[0].y.toFixed(2);
                 const xIndex = points[0].x; // Get the index
                 const xValue =
                   chartMode === "student"
                     ? new Date(studentData[xIndex].date)
                     : new Date(classData[xIndex].date);
-                console.log(points);
 
                 // Update the state based on the active chart mode
                 if (
@@ -178,17 +159,28 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
           <VictoryGroup
             width={chartWidth}
             height={chartHeight}
-            animate={{ duration: 200 }}
+            animate={{ duration: 400, easing: "cubicOut" }}
           >
             {/* Student Line */}
             {(isDualLineMode || chartMode === "student") && ( // Render only in dual-line mode or if student mode is active
               <VictoryLine
                 interpolation="catmullRom"
                 data={studentData}
+                groupComponent={
+                  <VictoryClipContainer
+                    clipPadding={{
+                      top: 4,
+                      right: 1,
+                      left: 1,
+                      bottom: 4,
+                    }}
+                  />
+                }
                 style={{
                   data: {
                     stroke: accentColor,
-                    strokeWidth: 2.5,
+                    strokeWidth: 3,
+                    strokeLinecap: "round",
                     opacity: isDualLineMode
                       ? chartMode === "student"
                         ? 1
@@ -202,7 +194,17 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
             {(isDualLineMode || chartMode === "student") && ( // Render only in dual-line mode or if student mode is active
               <VictoryScatter
                 data={studentData}
-                size={({ active }) => (active ? 5 : 0)}
+                size={({ active, index }) => {
+                  if (chartMode !== "student") return 0;
+
+                  if (!studentDate && index === studentData.length - 1) {
+                    return 6;
+                  } else if (active && activeChart) {
+                    return 6;
+                  } else {
+                    return 0;
+                  }
+                }}
                 style={{
                   data: {
                     color: accentColor,
@@ -221,10 +223,21 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
               <VictoryLine
                 interpolation="catmullRom"
                 data={classData}
+                groupComponent={
+                  <VictoryClipContainer
+                    clipPadding={{
+                      top: 4,
+                      right: 1,
+                      left: 1,
+                      bottom: 4,
+                    }}
+                  />
+                }
                 style={{
                   data: {
                     stroke: "gray",
-                    strokeWidth: 2.5,
+                    strokeWidth: 3,
+                    strokeLinecap: "round",
                     opacity: isDualLineMode
                       ? chartMode === "class"
                         ? 1
@@ -238,7 +251,17 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
             {(isDualLineMode || chartMode === "class") && ( // Render only in dual-line mode or if class mode is active
               <VictoryScatter
                 data={classData}
-                size={({ active }) => (active ? 5 : 0)}
+                size={({ active, index }) => {
+                  if (chartMode !== "class") return 0;
+
+                  if (!classDate && index === classData.length - 1) {
+                    return 6;
+                  } else if (active && activeChart) {
+                    return 6;
+                  } else {
+                    return 0;
+                  }
+                }}
                 style={{
                   data: {
                     color: "gray",
@@ -349,30 +372,6 @@ const AverageHistoryGraph: React.FC<AverageHistoryGraphProps> = ({
           </div>
         </div>
       </div>
-      {minHeight && (
-        <div className="flex flex-col">
-          <ListItem
-            className="px-3 py-1 !font-medium text-black/50"
-            trailing={
-              <div className="text-lg !font-bold text-black">
-                {maxAverage.toFixed(2)}
-              </div>
-            }
-            title={"Moyenne théorique max."}
-            index={1}
-          />
-          <ListItem
-            className="px-3 py-1 !font-medium text-black/50"
-            trailing={
-              <div className="text-lg !font-bold text-black">
-                {minAverage.toFixed(2)}
-              </div>
-            }
-            title={"Moyenne théorique min."}
-            index={2}
-          />
-        </div>
-      )}
     </motion.div>
   );
 };

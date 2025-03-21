@@ -31,14 +31,15 @@ export const List: React.FC<ListProps> = ({
   onMouseLeave,
 }: ListProps) => {
   return (
-    <div
+    <motion.div
       className={`card flex w-full select-none flex-col overflow-hidden ${className}`}
       style={style}
       onClick={onClick}
       onMouseLeave={onMouseLeave}
+      layout
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 
@@ -76,7 +77,7 @@ export const ListItem: React.FC<ListItemProps> = ({
   onMouseLeave,
 }: ListItemProps) => {
   return (
-    <div
+    <motion.div
       className={`${className} flex items-center ${onClick && chevron && "cursor-pointer"}`}
       style={{
         borderTop: index !== 0 ? "1px solid rgba(0, 0, 0, 0.15)" : "",
@@ -85,6 +86,7 @@ export const ListItem: React.FC<ListItemProps> = ({
       onClick={onClick}
       onMouseLeave={onMouseLeave}
       onMouseEnter={onMouseEnter}
+      layout
     >
       {leading && leading}
       {typeof Icon === "string" ? (
@@ -125,7 +127,7 @@ export const ListItem: React.FC<ListItemProps> = ({
       )}
       {CheckBoxElement}
       {trailing && trailing}
-    </div>
+    </motion.div>
   );
 };
 
@@ -735,7 +737,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <motion.button
-      className={`m-2 h-10 rounded-lg text-center text-base font-semibold uppercase tracking-wider text-white transition-colors ${className}`}
+      className={`m-2 h-10 rounded-full text-center text-base font-semibold uppercase tracking-wider text-white transition-colors ${className}`}
       onClick={onClick}
       style={{ backgroundColor: accentColor, ...style }}
       disabled={disabled}

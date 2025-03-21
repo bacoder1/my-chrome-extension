@@ -10,17 +10,17 @@
     "name": "resize_image"
   },
   "background.js": {
-    "file": "assets/background.js-BCf_JTwC.js",
+    "file": "assets/background.js-CyD2KuSY.js",
     "name": "background.js",
     "src": "background.js",
     "isEntry": true
   },
   "content.tsx-loader.js": {
-    "file": "assets/content.tsx-loader-DKkExk4R.js",
+    "file": "assets/content.tsx-loader-C1iWaQ8A.js",
     "src": "content.tsx-loader.js"
   },
   "index.html": {
-    "file": "assets/index.html-BA7Uypp2.js",
+    "file": "assets/index.html-DNo2Kd9_.js",
     "name": "index.html",
     "src": "index.html",
     "isEntry": true,
@@ -28,7 +28,7 @@
       "_resize_image-50o9hnDU.js"
     ],
     "css": [
-      "assets/index-D8N5hmqY.css"
+      "assets/index-CMgPJFUI.css"
     ],
     "assets": [
       "assets/personalization_palette-BoK3kxdg.png"
@@ -39,7 +39,7 @@
     "src": "src/assets/images/personalization_palette.png"
   },
   "src/scripts/content.tsx": {
-    "file": "assets/content.tsx-TOGgwXbl.js",
+    "file": "assets/content.tsx-bQPAMAex.js",
     "name": "content.tsx",
     "src": "src/scripts/content.tsx",
     "isEntry": true,

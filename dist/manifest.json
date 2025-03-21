@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.tsx-loader-DKkExk4R.js"
+        "assets/content.tsx-loader-C1iWaQ8A.js"
       ],
       "matches": [
         "https://*.index-education.net/pronote/*"
@@ -49,7 +49,7 @@
       ],
       "resources": [
         "assets/resize_image-50o9hnDU.js",
-        "assets/content.tsx-TOGgwXbl.js"
+        "assets/content.tsx-bQPAMAex.js"
       ],
       "use_dynamic_url": false
     }

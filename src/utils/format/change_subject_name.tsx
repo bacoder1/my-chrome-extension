@@ -30,19 +30,15 @@ export default function changeSubjectName(element: any, emoji = true) {
           "--couleur-matiere",
         );
         element.parentElement!.parentElement!.parentElement!.parentElement!.style.setProperty("--couleur-matiere", item.color);
-        console.log("did")
       } else if (matchingItem && selectorId === "edt") {
         (
           element.parentElement!.parentElement!.querySelector(".trait-matiere") as HTMLElement
         ).style.backgroundColor = item.color;
-        console.log("did")
       } else if (matchingItem && selectorId === "ressources") {
         (element as HTMLElement).style.setProperty("--color-line", item.color);
-        console.log("did")
       }
     }
 
-    console.log("done")
     
 
     element.innerText = `${emoji ? item.emoji : ""} ${item.pretty}`;

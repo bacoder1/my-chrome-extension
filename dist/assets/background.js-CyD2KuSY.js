@@ -1,0 +1,1 @@
+chrome.runtime.onMessage.addListener((e,t,s)=>{e.type==="DernieresNotes"&&(console.log("Received grades data:",e.data),chrome.storage.local.get("DernieresNotes",r=>{const o=r.DernieresNotes||{};o[e.data.donneesSec.data.listeDevoirs.V[0].periode.V.L]=e.data,chrome.storage.local.set({[e.type]:o},()=>{console.log("Grades data saved to chrome.storage")})}))});

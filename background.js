@@ -3,9 +3,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "DernieresNotes") {
       console.log("Received grades data:", message.data);
 
-      // Store the data in chrome.storage
-      chrome.storage.local.set({ [message.type]: message.data }, () => {
-          console.log("Grades data saved to chrome.storage");
+      chrome.storage.local.get("DernieresNotes", (result) => {
+        const DernieresNotes = result.DernieresNotes || {};
+
+        DernieresNotes[message.data.donneesSec.data.listeDevoirs.V[0].periode.V.L] = message.data;
+
+        chrome.storage.local.set({ [message.type]: DernieresNotes }, () => {
+            console.log("Grades data saved to chrome.storage");
+        });
+        
       });
-  }
-});
+      
+      // Store the data in chrome.storage
+    }
+  });
+  

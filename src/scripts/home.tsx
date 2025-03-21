@@ -19,8 +19,6 @@ export default function home() {
     }
   });
 
-  console.log("dsdsq");
-
   document.querySelectorAll(".widget .cta-conteneur i").forEach((element) => {
     if (!element.querySelector("svg"))
       element.insertAdjacentElement("beforeend", createElement(ArrowUpRight));

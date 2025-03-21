@@ -5,6 +5,7 @@ export default function changeSubjectColor(color: string, element: any, parent: 
   console.log(typeof window.getComputedStyle(parent).getPropertyValue("--subject-color"))
   if (window.getComputedStyle(parent).getPropertyValue("--subject-color") === "") {
     const closestColor = getClosestColor(color, subjectColors);
+    console.log(color, getClosestColor)
     parent.style.setProperty("--subject-color", closestColor);
     element.style.backgroundColor = `rgba(${closestColor}, ${opacity})`;
   }

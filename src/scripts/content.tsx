@@ -13,6 +13,34 @@ import subjectSelectors from "../utils/data/subject_selectors.json";
 import grades from "./grades";
 import timetable from "./timetable";
 
+const data = fetch(
+  "https://3310001c.index-education.net/pronote/appelfonction/3/3194151/658f518206dd39733b19fdaeb1dde002",
+  {
+    headers: {
+      accept: "*/*",
+      "accept-language":
+        "fr-BF,fr;q=0.9,en-GB;q=0.8,en;q=0.7,fr-FR;q=0.6,en-US;q=0.5",
+      "content-type": "application/json",
+      priority: "u=1, i",
+      "sec-ch-ua":
+        '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"',
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": '"Windows"',
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin",
+    },
+    referrer: "https://3310001c.index-education.net/pronote/eleve.html",
+    referrerPolicy: "strict-origin-when-cross-origin",
+    body: '{"session":3194151,"numeroOrdre":"658f518206dd39733b19fdaeb1dde002","nom":"Authentification","donneesSec":{"data":{"connexion":0,"challenge":"1506dc6e2e90c3b08ba996798a6dac09525cd4376b76267b4c380c4059067c9b","espace":3}}}',
+    method: "POST",
+    mode: "cors",
+    credentials: "include",
+  },
+);
+
+async () => console.log(await data);
+
 // Inject the interception script into the page
 const script = document.createElement("script");
 script.src = chrome.runtime.getURL("intercept.js");
