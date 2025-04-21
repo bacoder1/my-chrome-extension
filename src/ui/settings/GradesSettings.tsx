@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../styles/app/globals.css";
 import { Heading, List, ListItem } from "../Components";
 import { decodeGrade } from "../../utils/decode/decode_grade";
-import { getPronoteAverage } from "../../utils/calc/pronote_average";
 import { Grade, SubjectAverage } from "../../types/types";
-import getAveragesHistory from "../../utils/calc/average_history";
 import _ from "lodash";
 import { motion } from "motion/react";
 import { decodeSubjectAverage } from "../../utils/decode/decode_subject-average";
@@ -15,78 +13,75 @@ import Drawer from "../custom/Drawer";
 import AverageHistoryGraph from "../custom/AverageHistoryGraph";
 import { getAverageDiff } from "../../utils/calc/average_diff";
 import { adjustColor } from "../../utils/color/adjust_color";
-import Picker from "../custom/Picker";
-import { ChevronDown } from "lucide-react";
 import { getSubjectAverage } from "../../utils/calc/subject_average";
 
 const GradesSettings: React.FC = () => {
-  const [grades, setGrades] = useState<Grade[]>([]);
-  const [subjectAverages, setSubjectAverages] = useState<SubjectAverage[]>([]);
-  const [studentAverage, setStudentAverage] = useState<number | null>(null); // Initialize as null
-  const [classAverage, setClassAverage] = useState<number | null>(null); // Initialize as null
-  const [studentHistory, setStudentHistory] = useState<any>([]);
-  const [classHistory, setClassHistory] = useState<any>([]);
+  return (
+    <div className="flex flex-col p-2">
+      {/* Only render Graph if averages are loaded */}
+      <div className="h-5" />
+      <AverageHistoryGraph
+        studentLabel="Moyenne gén."
+        classLabel="Moyenne classe"
+      />
+      <Subjects />
+    </div>
+  );
+};
 
-  const [periods, setPeriods] = useState<string[]>([]);
+interface SubjectData {
+  [key: string]: Subject;
+}
+
+const Subjects: React.FC = () => {
+  const [subjectAverages, setSubjectAverages] = useState<SubjectAverage[]>([]);
+  const [subjectData, setSubjectData] = useState<SubjectData>({});
+  const [selectedSubject, setSelectedSubject] = useState<SubjectAverage | null>(
+    null,
+  );
+
+  const [grades, setGrades] = useState<Grade[]>([]);
+
+  const studentDiff = getAverageDiff(
+    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
+    grades,
+  );
+  const classDiff = getAverageDiff(
+    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
+    grades,
+    "average",
+  );
+
   const [selectedPeriod, setSelectedPeriod] = useState("");
 
   useEffect(() => {
+    chrome.storage.sync.get("subjectData", (result) => {
+      let subjectData = result.subjectData;
+
+      setSubjectData(subjectData);
+    });
+  }, []);
+
+  useEffect(() => {
     chrome.storage.local.get("DernieresNotes", async (result) => {
+      const { period } = await chrome.storage.sync.get("mainChartPeriod");
+      setSelectedPeriod(period);
       let rawGrades = result.DernieresNotes[selectedPeriod];
       const isYear = selectedPeriod === "Année";
-      let latestPeriod = "";
-      let latestDate = new Date(0); // January 1, 1970
-      let periods = Object.keys(result.DernieresNotes).filter(
-        (key) => key !== "Année",
-      );
-
-      for (let period of periods) {
-        let rawGrades =
-          result.DernieresNotes[period]?.donneesSec?.data?.listeDevoirs?.V;
-
-        if (rawGrades && rawGrades.length > 0) {
-          // Find the most recent grade date in this period
-          let mostRecentGradeDate = rawGrades
-            .map((grade: any) => {
-              const [day, month, year] = grade.date.V.split("/").map(Number);
-
-              return new Date(year, month - 1, day);
-            })
-            .reduce(
-              (latest: any, current: any) =>
-                current > latest ? current : latest,
-              new Date(0), // Start with oldest date as initial value
-            );
-
-          if (mostRecentGradeDate > latestDate) {
-            latestDate = mostRecentGradeDate;
-            latestPeriod = period;
-          }
-        }
-      }
-
-      // Only set the selected period if it hasn't been set already
-      if (selectedPeriod === "") {
-        setSelectedPeriod(latestPeriod || "Année"); // Fallback to "Année" if no period has grades
-      }
-
-      setPeriods([...periods, "Année"]);
 
       if (isYear) {
         let grades = [];
 
         for (let key in result.DernieresNotes) {
-          grades.push(
-            ...result.DernieresNotes[key].donneesSec.data.listeDevoirs.V.map(
-              (grade: any) => decodeGrade(grade),
-            ),
-          );
+          if (key !== "Année")
+            grades.push(
+              ...result.DernieresNotes[key].donneesSec.data.listeDevoirs.V.map(
+                (grade: any) => decodeGrade(grade),
+              ),
+            );
         }
 
         console.log(grades);
-        const student_average = getPronoteAverage(grades, "value");
-        const class_average = getPronoteAverage(grades, "average");
-        console.log(student_average);
 
         const groupedBySubject = grades.reduce(
           (acc: Record<string, Grade[]>, grade) => {
@@ -111,8 +106,6 @@ const GradesSettings: React.FC = () => {
               kind: 0,
               points: getSubjectAverage(grades, "average"),
             },
-            min: { kind: 0, points: getSubjectAverage(grades, "min") },
-            max: { kind: 0, points: getSubjectAverage(grades, "max") },
             subject: {
               id: key,
               name: key,
@@ -123,152 +116,50 @@ const GradesSettings: React.FC = () => {
         }
 
         console.log(subject_averages);
-        let studentHistory = [];
-        let classHistory = [];
 
-        for (let key in result.DernieresNotes) {
-          const grades = result.DernieresNotes[
-            key
-          ].donneesSec.data.listeDevoirs.V.map((grade: any) =>
-            decodeGrade(grade),
+        if (selectedSubject) {
+          setSelectedSubject((prevSubject) =>
+            (subject_averages.find(
+              (s: any) => s.subject.name === prevSubject?.subject.name,
+            ) as SubjectAverage),
           );
-
-          studentHistory.push(...getAveragesHistory(grades, "value"));
-          classHistory.push(...getAveragesHistory(grades, "average"));
+        } else {
+          setSubjectAverages(subject_averages as SubjectAverage[]);
         }
 
-        setStudentHistory(studentHistory);
-        setClassHistory(classHistory);
-
-        setSubjectAverages(subject_averages as any);
-
-        console.log(
-          grades,
-          student_average,
-          class_average,
-          studentHistory,
-          classHistory,
-          subject_averages,
-        );
-
         setGrades(grades);
-        setStudentAverage(student_average); // Update state with fetched average
-        setClassAverage(class_average); // Update state with fetched average
       } else if (rawGrades) {
-        const student_average = Number(
-          rawGrades.donneesSec.data.moyGenerale.V.replace(",", "."),
+        const grades = rawGrades.donneesSec.data.listeDevoirs.V.map((g: any) =>
+          decodeGrade(g),
         );
-        const class_average = Number(
-          rawGrades.donneesSec.data.moyGeneraleClasse.V.replace(",", "."),
-        );
-
-        const grades = rawGrades.donneesSec.data.listeDevoirs.V.map(
-          (grade: any) => decodeGrade(grade),
-        );
-
         const subject_averages = rawGrades.donneesSec.data.listeServices.V.map(
           (subject: any) => decodeSubjectAverage(subject),
         );
 
-        const studentHistory = getAveragesHistory(
-          grades,
-          "value",
-          student_average,
-        );
-        const classHistory = getAveragesHistory(
-          grades,
-          "average",
-          class_average,
-        );
+        if (selectedSubject) {
+          setSelectedSubject((prevSubject) =>
+            (subject_averages.find(
+              (s: any) => s.subject.name === prevSubject?.subject.name,
+            ) as SubjectAverage),
+          );
+        } else {
+          setSubjectAverages(subject_averages);
+        }
 
-        setStudentHistory(studentHistory);
-        setClassHistory(classHistory);
-
-        setSubjectAverages(subject_averages);
 
         setGrades(grades);
-        setStudentAverage(student_average); // Update state with fetched average
-        setClassAverage(class_average); // Update state with fetched average
       }
+
     });
-  }, [selectedPeriod]); // Empty dependency array to run only once
-
-  return (
-    <div className="flex flex-col p-2">
-      {/* Only render Graph if averages are loaded */}
-      <Picker
-        selected={async () => {
-          return { label: selectedPeriod };
-        }}
-        onSelect={(item) => item && setSelectedPeriod(item.label)}
-        data={periods.map((period) => ({ label: period }))}
-      >
-        <div className="card flex h-9 cursor-pointer items-center justify-center gap-2 text-sm font-semibold transition-colors ease-in-out hover:bg-black/5">
-          <span>{selectedPeriod}</span>
-          <ChevronDown size={20} />
-        </div>
-      </Picker>
-      <div className="h-5" />
-      {studentAverage && classAverage ? (
-        <AverageHistoryGraph
-          overall={studentAverage}
-          classAverage={classAverage}
-          studentData={studentHistory}
-          classData={classHistory}
-          studentLabel="Moyenne gén."
-          classLabel="Moyenne classe"
-        />
-      ) : null}
-      <Subjects subjectAverages={subjectAverages} grades={grades} />
-    </div>
-  );
-};
-
-interface SubjectsProps {
-  subjectAverages: SubjectAverage[];
-  grades: Grade[];
-  isYear?: boolean;
-}
-
-interface SubjectData {
-  [key: string]: Subject;
-}
-
-const Subjects: React.FC<SubjectsProps> = ({
-  subjectAverages,
-  grades,
-}: SubjectsProps) => {
-  const [subjectData, setSubjectData] = useState<SubjectData>({});
-  const [selectedSubject, setSelectedSubject] = useState<SubjectAverage | null>(
-    null,
-  );
-
-  const studentHistory = getAveragesHistory(
-    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
-    "value",
-    selectedSubject?.student?.points,
-  );
-  const classHistory = getAveragesHistory(
-    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
-    "average",
-    selectedSubject?.class_average?.points,
-  );
-
-  const studentDiff = getAverageDiff(
-    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
-    grades,
-  );
-  const classDiff = getAverageDiff(
-    grades.filter((g) => g.subject.name === selectedSubject?.subject.name),
-    grades,
-    "average",
-  );
+  }, [selectedPeriod]);
 
   useEffect(() => {
-    chrome.storage.sync.get("subjectData", (result) => {
-      let subjectData = result.subjectData;
+    chrome.storage.onChanged.addListener((changes, _namespace) => {
+      if (changes.selectedPeriod)
+        setSelectedPeriod(changes.selectedPeriod.newValue);
 
-      setSubjectData(subjectData);
+      if (changes.mainChartPeriod)
+        setSelectedPeriod(changes.mainChartPeriod.newValue);
     });
   }, []);
 
@@ -279,12 +170,9 @@ const Subjects: React.FC<SubjectsProps> = ({
           {selectedSubject && (
             <>
               <AverageHistoryGraph
-                overall={selectedSubject.student?.points || NaN}
-                classAverage={selectedSubject.class_average?.points || NaN}
-                studentData={studentHistory}
-                classData={classHistory}
                 studentLabel="Moyenne"
                 classLabel="Moyenne classe"
+                subject={selectedSubject.subject.name}
                 color={
                   subjectData[selectedSubject.subject.name]?.color
                     ? subjectData[selectedSubject.subject.name].color

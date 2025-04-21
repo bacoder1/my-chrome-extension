@@ -274,8 +274,7 @@ h1[aria-label="Mon emploi du temps"] + .element-bandeau-wrapper {
 }
 
 .main-header {
-  /* border-radius: 0 0 3rem 3rem !important; */
   box-shadow: 0 -1px 7.5px rgba(var(--black), 0.15) !important;
-  overflow: hidden !important;
   background-color: rgba(var(--background), 1);
+  border-bottom: 1px solid rgba(var(--black), 0.15);
 }

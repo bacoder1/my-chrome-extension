@@ -3,6 +3,8 @@ const originalOpen = XMLHttpRequest.prototype.open;
 const originalSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
 const originalSend = XMLHttpRequest.prototype.send;
 
+const navigationPages = ["PageInfosPerso", "PageAccueil", "PageCahierDeTexte", "DernieresNotes"];
+
 // Override the open method
 XMLHttpRequest.prototype.open = function (method, url) {
   // Store the URL for later use
@@ -52,6 +54,19 @@ XMLHttpRequest.prototype.send = function (body) {
             {
               type: "DernieresNotes",
               data: responseBody,
+            },
+            "*",
+          );
+        }
+
+        if (navigationPages.includes(responseBody?.nom)) {
+          console.log("updating page");
+
+          // Send the data to the content script using window.postMessage
+          window.postMessage(
+            {
+              type: "page-update",
+              data: responseBody?.nom,
             },
             "*",
           );

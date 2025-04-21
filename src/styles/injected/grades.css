@@ -1,0 +1,8 @@
+.InterfaceDernieresNotes .details-notes > div:nth-child(2),
+.InterfaceDernieresNotes .details-notes > div:nth-child(4) {
+  padding-bottom: 0.8rem;
+}
+
+.InterfaceDernieresNotes .details-notes > div:not(:first-child) > span:first-child{
+  opacity: 0.6 !important;
+}

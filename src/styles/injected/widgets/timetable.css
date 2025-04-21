@@ -88,9 +88,10 @@
 				font-size: inherit !important;
 				color: rgba(var(--subject-color), 1) !important;
 				border-radius: 0.6rem !important;
-				padding: 0.5rem 0.57rem !important;
+				padding: 0.4rem 0.6rem !important;
 				background: rgba(var(--subject-color), 0.2);
 				width: fit-content;
+				font-weight: 600;
 			}
 		}
 	}

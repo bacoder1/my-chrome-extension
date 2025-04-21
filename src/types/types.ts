@@ -86,7 +86,7 @@ export type Subject = Readonly<{
   inGroups: boolean
 }>;
 
-export type SubjectAverage = Readonly<{
+export type SubjectAverage = {
   /** students average in the subject */
   student?: GradeValue;
   /** classes average in the subject */
@@ -103,4 +103,4 @@ export type SubjectAverage = Readonly<{
   subject: Subject;
   /** background color of the subject */
   backgroundColor: string;
-}>;
+};

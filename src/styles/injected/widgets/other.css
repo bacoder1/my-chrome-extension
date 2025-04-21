@@ -28,6 +28,11 @@
 		font-weight: 600 !important;
 		font-style: normal !important;
 
+		input {
+			padding: 0 !important;
+			border: none !important;
+		}
+
 		& ::placeholder {
 			font-style: inherit !important;
 			color: rgba(var(--light-gray), 1) !important;
